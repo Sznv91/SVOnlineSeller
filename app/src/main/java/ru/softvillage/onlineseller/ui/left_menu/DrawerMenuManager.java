@@ -26,6 +26,7 @@ import java.util.Locale;
 
 import ru.softvillage.onlineseller.BuildConfig;
 import ru.softvillage.onlineseller.R;
+import ru.softvillage.onlineseller.presenter.AuthPresenter;
 import ru.softvillage.onlineseller.presenter.UiPresenter;
 import ru.softvillage.onlineseller.ui.dialog.AboutDialog;
 import ru.softvillage.onlineseller.ui.dialog.ExitDialog;
@@ -89,6 +90,7 @@ public class DrawerMenuManager<T extends AppCompatActivity> implements
 
     private ActionBarDrawerToggle toggle;
     private ActionBar mActionBar;
+    private boolean mToolBarNavigationListenerIsRegistered = false;
 
     public DrawerMenuManager(T activity) {
         this.activity = activity;
@@ -176,7 +178,9 @@ public class DrawerMenuManager<T extends AppCompatActivity> implements
 
             @Override
             public void onDrawerOpened(@NonNull @org.jetbrains.annotations.NotNull View drawerView) {
-
+                if (!AuthPresenter.getInstance().isFirstStageAuth()){
+                    makeVisiblyAboutMenu();
+                }
             }
 
             @Override
@@ -372,5 +376,51 @@ public class DrawerMenuManager<T extends AppCompatActivity> implements
         main_menu.setVisibility(View.GONE);
         version.setVisibility(View.GONE);
         about_menu.setVisibility(View.VISIBLE);
+    }
+
+    public void showUpButton(boolean show) {
+        // To keep states of ActionBar and ActionBarDrawerToggle synchronized,
+        // when you enable on one, you disable on the other.
+        // And as you may notice, the order for this operation is disable first, then enable - VERY VERY IMPORTANT.
+        if (show) {
+            //Запрещаяем выезжание меню справа
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            // Remove hamburger
+            toggle.setDrawerIndicatorEnabled(false);
+            // Show back button
+            mActionBar.setDisplayHomeAsUpEnabled(true);
+            // when DrawerToggle is disabled i.e. setDrawerIndicatorEnabled(false), navigation icon
+            // clicks are disabled i.e. the UP button will not work.
+            // We need to add a listener, as in below, so DrawerToggle will forward
+            // click events to this listener.
+            if (!mToolBarNavigationListenerIsRegistered) {
+                toggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        activity.onBackPressed();
+                    }
+                });
+
+                mToolBarNavigationListenerIsRegistered = true;
+            }
+
+        } else {
+            //Разрешаем выезжание меню справа
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            // Remove back button
+            mActionBar.setDisplayHomeAsUpEnabled(false);
+            // Show hamburger
+            toggle.setDrawerIndicatorEnabled(true);
+            // Remove the/any drawer toggle listener
+            toggle.setToolbarNavigationClickListener(null);
+            mToolBarNavigationListenerIsRegistered = false;
+        }
+
+        // So, one may think "Hmm why not simplify to:
+        // .....
+        // getSupportActionBar().setDisplayHomeAsUpEnabled(enable);
+        // mDrawer.setDrawerIndicatorEnabled(!enable);
+        // ......
+        // To re-iterate, the order in which you enable and disable views IS important #dontSimplify.
     }
 }

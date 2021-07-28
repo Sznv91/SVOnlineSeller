@@ -7,7 +7,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "ru.softvillage.onlinesaller"
+        applicationId "ru.softvillage.onlineseller"
         minSdkVersion 23
         targetSdkVersion 30
         versionCode 1
@@ -29,6 +29,12 @@ android {
 }
 
 dependencies {
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+
+    //Joda time
+    implementation 'joda-time:joda-time:2.10.10'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+
     /*Lombook*/
     compileOnly 'org.projectlombok:lombok:1.18.16'
     annotationProcessor 'org.projectlombok:lombok:1.18.16'

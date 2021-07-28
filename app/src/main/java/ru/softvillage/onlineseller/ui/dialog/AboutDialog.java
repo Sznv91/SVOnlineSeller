@@ -32,6 +32,7 @@ public class AboutDialog extends DialogFragment {
     public static final String TYPE_USER_AGREEMENT = "user_agreement";
     public static final String TYPE_LICENSES = "licenses";
     public static final String TYPE_DATA_PROTECTION = "data_protection";
+    public static final String TYPE_AUTH_WHAT_I_DO = "what_i_do";
 
     private String dialogType;
 
@@ -131,6 +132,10 @@ public class AboutDialog extends DialogFragment {
             case TYPE_DATA_PROTECTION:
                 about_dialog_title.setText(getText(R.string.about_menu_title_data_protection));
                 dIcon = ContextCompat.getDrawable(about_dialog_icon.getContext(), R.drawable.ic_icon_data_protection);
+                break;
+            case TYPE_AUTH_WHAT_I_DO:
+                about_dialog_title.setText("Регистрация Пин-кода");
+                dIcon = ContextCompat.getDrawable(about_dialog_icon.getContext(), R.drawable.ic_icon_licenses);
                 break;
             default:
                 about_dialog_title.setText("unexpected type");
