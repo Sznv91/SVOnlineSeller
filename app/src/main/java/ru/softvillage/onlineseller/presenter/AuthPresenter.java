@@ -2,18 +2,11 @@ package ru.softvillage.onlineseller.presenter;
 
 
 import android.annotation.SuppressLint;
-import android.text.TextUtils;
-import android.util.Log;
 
-import org.joda.time.Duration;
 import org.joda.time.LocalDateTime;
-
-import java.util.concurrent.ThreadLocalRandom;
 
 import lombok.Getter;
 import ru.softvillage.onlineseller.util.Prefs;
-
-import static ru.softvillage.onlineseller.AppSeller.TAG;
 
 public class AuthPresenter {
     public static final String FIRST_STAGE_AUTH = "first_stage_auth";
@@ -42,19 +35,7 @@ public class AuthPresenter {
     @SuppressLint("LongLogTag")
     private void init() {
         firstStageAuth = Prefs.getInstance().loadBoolean(FIRST_STAGE_AUTH);
-        if (TextUtils.isEmpty(Prefs.getInstance().loadString(PIN_CODE_TIME_STAMP))) {
-            generateAndSavePin();
-        } else {
-            pinCodeTimeStamp = LocalDateTime.parse(Prefs.getInstance().loadString(PIN_CODE_TIME_STAMP));
-            pinCode = Prefs.getInstance().loadInt(PIN_CODE);
-            Duration duration = new Duration(pinCodeTimeStamp.toDateTime(), LocalDateTime.now().toDateTime());
-            Log.d(TAG + "AuthPresenter", "duration: " + duration.getMillis());
-            if (duration.getMillis() >= TEN_MINUTES_IN_MILLIS) {
-                generateAndSavePin();
-            }
-        }
-        pinCode = Prefs.getInstance().loadInt(PIN_CODE);
-        pinCode = pinCode == -1 ? generateAndSavePin() : pinCode;
+        pinCode = 12345;
     }
 
     public void setFirstStageAuth(boolean firstStageAuth) {
@@ -68,11 +49,4 @@ public class AuthPresenter {
         return pinCode;
     }
 
-    private int generateAndSavePin() {
-        pinCodeTimeStamp = LocalDateTime.now();
-        int tPinCode = ThreadLocalRandom.current().nextInt(11111, 99999);
-        Prefs.getInstance().saveInt(PIN_CODE, tPinCode);
-        Prefs.getInstance().saveString(PIN_CODE_TIME_STAMP, pinCodeTimeStamp.toString());
-        return tPinCode;
-    }
 }

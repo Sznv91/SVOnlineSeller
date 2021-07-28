@@ -3,7 +3,6 @@ package ru.softvillage.onlineseller.ui;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import ru.softvillage.onlineseller.AppSeller;
 import ru.softvillage.onlineseller.R;
@@ -19,7 +18,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         AppSeller.getInstance().getFragmentDispatcher().setActivity(this);
         DrawerMenuManager<MainActivity> manager = new DrawerMenuManager<>(this); // Инициализация бокового меню
 
@@ -30,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (savedInstanceState == null) {
-            if (!AuthPresenter.getInstance().isFirstStageAuth()){
+            if (!AuthPresenter.getInstance().isFirstStageAuth()) {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_holder, AuthFragment.newInstance(null, null)).commit();
             }
         }

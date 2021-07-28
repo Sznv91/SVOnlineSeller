@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "123278211891",
+    "project_id": "mobile-kkt",
+    "storage_bucket": "mobile-kkt.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:123278211891:android:73ae17a632af97e7d7dc46",
+        "android_client_info": {
+          "package_name": "ru.softvillage.onlinesaller"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "123278211891-h75958qgirkoue3tq63q6k98tu15aqun.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpsDzW5GV3vAgtDPeBjAkKFW73XHW6-qE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "123278211891-h75958qgirkoue3tq63q6k98tu15aqun.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
