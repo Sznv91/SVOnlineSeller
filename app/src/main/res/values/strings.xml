@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Онлайн Касса</string>
+    <string name="title_left_menu">SV.Seller</string>
+    <string name="title_about">О приложении</string>
+    <string name="close">ЗАКРЫТЬ</string>
+    <string name="cancel">ОТМЕНА</string>
+    <string name="title_dialog_exit">Закрыть Mailer?</string>
+    <string name="about_menu_title_feedback">Обратная связь</string>
+    <string name="about_menu_title_rate_the_app">Оцените приложение</string>
+    <string name="about_menu_title_privacy_policy">Политика конфиденциальности</string>
+    <string name="about_menu_title_user_agreement">Пользовательское соглашение</string>
+    <string name="about_menu_title_licenses">Лицензии</string>
+    <string name="about_menu_title_data_protection">Защита данных</string>
+    <string name="exit_up">ВЫХОД</string>
+    <string name="navigation_drawer_open">navi_open</string>
+    <string name="navigation_drawer_close">navi_close</string>
+</resources>
