@@ -103,7 +103,17 @@ public class AuthFragment extends Fragment implements View.OnClickListener {
 
         UiPresenter.getInstance().getCurrentThemeLiveData().observe(getViewLifecycleOwner(), observer);
 
+        fillToDisplayHeight();
         initData();
+    }
+
+    private void fillToDisplayHeight() {
+        int displayHeight = getResources().getDisplayMetrics().heightPixels;
+        int imageViewMargin = displayHeight / 7;
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) auth_big_logo.getLayoutParams();
+        params.topMargin = imageViewMargin;
+        auth_big_logo.setLayoutParams(params);
+        auth_big_logo.requestLayout();
     }
 
     private void initData() {
@@ -131,7 +141,7 @@ public class AuthFragment extends Fragment implements View.OnClickListener {
             pin_number_4.setTextColor(ContextCompat.getColor(pin_number_4.getContext(), R.color.active_fonts_lt));
             pin_number_5.setTextColor(ContextCompat.getColor(pin_number_5.getContext(), R.color.active_fonts_lt));
             auth_title_what_i_do.setTextColor(ContextCompat.getColor(auth_title_what_i_do.getContext(), R.color.icon_lt));
-            auth_title_demo_mode.setTextColor(ContextCompat.getColor(auth_title_what_i_do.getContext(), R.color.fonts_lt));
+            auth_title_demo_mode.setBackground(ContextCompat.getDrawable(auth_title_demo_mode.getContext(), R.drawable.bg_dialog_black));
         } else {
             main_fragment_auth.setBackgroundColor(ContextCompat.getColor(main_fragment_auth.getContext(), R.color.main_dt));
             auth_pin_background.setImageDrawable(ContextCompat.getDrawable(auth_pin_background.getContext(), R.drawable.ic_pin_background_dark));
@@ -145,8 +155,10 @@ public class AuthFragment extends Fragment implements View.OnClickListener {
             pin_number_4.setTextColor(ContextCompat.getColor(pin_number_4.getContext(), R.color.active_fonts_dt));
             pin_number_5.setTextColor(ContextCompat.getColor(pin_number_5.getContext(), R.color.active_fonts_dt));
             auth_title_what_i_do.setTextColor(ContextCompat.getColor(auth_title_what_i_do.getContext(), R.color.icon_dt));
-            auth_title_demo_mode.setTextColor(ContextCompat.getColor(auth_title_what_i_do.getContext(), R.color.fonts_dt));
+            auth_title_demo_mode.setBackground(ContextCompat.getDrawable(auth_title_demo_mode.getContext(), R.drawable.bg_dialog));
         }
+        auth_title_demo_mode.setTextColor(ContextCompat.getColor(auth_title_what_i_do.getContext(), R.color.header_lt));
+
     }
 
     @Override
