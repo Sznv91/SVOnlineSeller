@@ -1,6 +1,8 @@
 package ru.softvillage.onlineseller.ui;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,6 +16,7 @@ import ru.softvillage.onlineseller.ui.left_menu.DrawerMenuManager;
 
 public class MainActivity extends AppCompatActivity {
 
+    @SuppressLint("LongLogTag")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_holder, AuthFragment.newInstance(null, null)).commit();
             }
         }
+
+        Log.d(AppSeller.TAG + "_MainActivity", "_getFireBaseTag: " + AuthPresenter.getInstance().getFireBaseToken());
     }
 
     @Override
