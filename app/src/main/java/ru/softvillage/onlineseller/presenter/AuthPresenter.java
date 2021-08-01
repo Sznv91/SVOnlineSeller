@@ -5,27 +5,31 @@ import android.annotation.SuppressLint;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.google.firebase.messaging.FirebaseMessaging;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
-import org.joda.time.LocalDateTime;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import lombok.Getter;
 import ru.softvillage.onlineseller.AppSeller;
+import ru.softvillage.onlineseller.dataBase.entity.LocalUser;
 import ru.softvillage.onlineseller.util.Prefs;
 
 public class AuthPresenter {
     public static final String FIRE_BASE_TOKEN = "fire_base_token";
     public static final String FIRST_STAGE_AUTH = "first_stage_auth";
+    public static final String LAST_SELECT_USER_ID = "last_select_user_id";
+
     public static final String PIN_CODE = "pin_code";
     public static final String PIN_CODE_TIME_STAMP = "pin_code_time_stamp";
     public static final Long TEN_MINUTES_IN_MILLIS = 10L * 60 * 1000;
 
     @Getter
     private String fireBaseToken;
-    @Getter
-    private boolean firstStageAuth;
-    private int pinCode;
-    private LocalDateTime pinCodeTimeStamp;
+    private final MutableLiveData<Boolean> firstStageAuth = new MutableLiveData<>(false);
+    private final MutableLiveData<Long> lastSelectUserId = new MutableLiveData<>();
+
+    private final MutableLiveData<LocalUser> lastSelectUser = new MutableLiveData<>(null);
 
     private static AuthPresenter instance;
 
@@ -42,7 +46,8 @@ public class AuthPresenter {
 
     @SuppressLint("LongLogTag")
     private void init() {
-        firstStageAuth = Prefs.getInstance().loadBoolean(FIRST_STAGE_AUTH);
+        firstStageAuth.setValue(Prefs.getInstance().loadBoolean(FIRST_STAGE_AUTH));
+        lastSelectUserId.setValue(Prefs.getInstance().loadLong(LAST_SELECT_USER_ID));
 
         fireBaseToken = Prefs.getInstance().loadString(FIRE_BASE_TOKEN);
         if (TextUtils.isEmpty(fireBaseToken)) {
@@ -53,18 +58,43 @@ public class AuthPresenter {
             });
         }
 
-        pinCode = 12345;
+    }
+
+    public LiveData<Boolean> getFirstStageAuthLiveData() {
+        return firstStageAuth;
     }
 
     public void setFirstStageAuth(boolean firstStageAuth) {
-        if (this.firstStageAuth != firstStageAuth) {
-            this.firstStageAuth = firstStageAuth;
+        if (this.firstStageAuth.getValue() != firstStageAuth) {
+            this.firstStageAuth.setValue(firstStageAuth);
             Prefs.getInstance().saveBoolean(FIRST_STAGE_AUTH, firstStageAuth);
         }
     }
 
-    public int getPinCode() {
-        return pinCode;
+    public LiveData<Long> getLastSelectUserId() {
+        return lastSelectUserId;
     }
 
+    public void setLastSelectUserId(long lastSelectUserId) {
+        if (this.lastSelectUserId.getValue() != null &&
+                !this.lastSelectUserId.getValue().equals(lastSelectUserId)) {
+            Prefs.getInstance().saveLong(LAST_SELECT_USER_ID, lastSelectUserId);
+            this.lastSelectUserId.postValue(lastSelectUserId);
+        }
+    }
+
+    public LiveData<LocalUser> getLastSelectUserLiveData() {
+        return lastSelectUser;
+    }
+
+    public void setLastSelectUser(LocalUser user) {
+        lastSelectUser.postValue(user);
+    }
+
+    public int getPinCode() {
+        int max = 99999;
+        int min = 11111;
+        max -= min;
+        return (int) (Math.random() * ++max) + min;
+    }
 }

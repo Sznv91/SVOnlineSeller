@@ -16,4 +16,7 @@
     <string name="navigation_drawer_close">navi_close</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_select_user">Выберите пользователя:</string>
+    <string name="button_continue">Продолжить</string>
+    <string name="button_update_user_list">Синхронизировать</string>
 </resources>

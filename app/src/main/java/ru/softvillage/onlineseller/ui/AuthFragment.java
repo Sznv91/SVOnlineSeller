@@ -19,6 +19,7 @@ import androidx.lifecycle.Observer;
 import org.jetbrains.annotations.NotNull;
 
 import ru.softvillage.onlineseller.R;
+import ru.softvillage.onlineseller.presenter.AppPresenter;
 import ru.softvillage.onlineseller.presenter.AuthPresenter;
 import ru.softvillage.onlineseller.presenter.UiPresenter;
 import ru.softvillage.onlineseller.ui.dialog.AboutDialog;
@@ -82,6 +83,7 @@ public class AuthFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        UiPresenter.getInstance().getDrawerManager().showUpButton(false);
         main_fragment_auth = view.findViewById(R.id.main_fragment_auth);
         auth_pin_layout = view.findViewById(R.id.auth_pin_layout);
         auth_big_logo = view.findViewById(R.id.auth_big_logo);
@@ -177,6 +179,8 @@ public class AuthFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.auth_title_demo_mode:
                 Log.d(TAG + "_AuthFragment", "click on demo-mode title");
+                AuthPresenter.getInstance().setFirstStageAuth(true);
+                AppPresenter.getInstance().populateDemoUser(true);
                 break;
         }
     }

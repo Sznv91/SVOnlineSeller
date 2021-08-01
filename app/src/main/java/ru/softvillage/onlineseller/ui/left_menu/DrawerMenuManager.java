@@ -21,11 +21,14 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import java.util.Locale;
 
 import ru.softvillage.onlineseller.BuildConfig;
 import ru.softvillage.onlineseller.R;
+import ru.softvillage.onlineseller.presenter.AppPresenter;
 import ru.softvillage.onlineseller.presenter.AuthPresenter;
 import ru.softvillage.onlineseller.presenter.UiPresenter;
 import ru.softvillage.onlineseller.ui.dialog.AboutDialog;
@@ -91,6 +94,15 @@ public class DrawerMenuManager<T extends AppCompatActivity> implements
     private ActionBarDrawerToggle toggle;
     private ActionBar mActionBar;
     private boolean mToolBarNavigationListenerIsRegistered = false;
+
+    private final MutableLiveData<Integer> serviceTapCounter = new MutableLiveData<>(0);
+    Observer<Integer> serviceTapObserver = tapCount -> {
+        if (tapCount >= 5) {
+            AuthPresenter.getInstance().setFirstStageAuth(false);
+            AppPresenter.getInstance().populateDemoUser(false);
+            serviceTapCounter.setValue(0);
+        }
+    };
 
     public DrawerMenuManager(T activity) {
         this.activity = activity;
@@ -160,7 +172,13 @@ public class DrawerMenuManager<T extends AppCompatActivity> implements
         about_menu_licenses.setOnClickListener(this);
         about_menu_data_protection.setOnClickListener(this);
         titleExit.setOnClickListener(this);
+        version.setOnClickListener(v -> {
+            int serviceCountValue = serviceTapCounter.getValue();
+            serviceCountValue++;
+            serviceTapCounter.setValue(serviceCountValue);
+        });
 
+        serviceTapCounter.observe(activity, serviceTapObserver);
         updateUITheme();
         updateVersion();
 
@@ -178,13 +196,14 @@ public class DrawerMenuManager<T extends AppCompatActivity> implements
 
             @Override
             public void onDrawerOpened(@NonNull @org.jetbrains.annotations.NotNull View drawerView) {
-                if (!AuthPresenter.getInstance().isFirstStageAuth()){
+                if (!AuthPresenter.getInstance().getFirstStageAuthLiveData().getValue()) {
                     makeVisiblyAboutMenu();
                 }
             }
 
             @Override
             public void onDrawerClosed(@NonNull @org.jetbrains.annotations.NotNull View drawerView) {
+                serviceTapCounter.setValue(0);
                 makeVisiblyMainMenu();
             }
 

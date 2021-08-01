@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 
 import ru.softvillage.onlineseller.AppSeller;
 import ru.softvillage.onlineseller.R;
@@ -15,6 +16,17 @@ import ru.softvillage.onlineseller.ui.dialog.AboutDialog;
 import ru.softvillage.onlineseller.ui.left_menu.DrawerMenuManager;
 
 public class MainActivity extends AppCompatActivity {
+
+    private Observer<Boolean> authObserver = new Observer<Boolean>() {
+        @Override
+        public void onChanged(Boolean firstStageAuth) {
+            if (firstStageAuth) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_holder, SelectUserFragment.newInstance(null, null)).commit();
+            } else {
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_holder, AuthFragment.newInstance(null, null)).commit();
+            }
+        }
+    };
 
     @SuppressLint("LongLogTag")
     @Override
@@ -30,12 +42,7 @@ public class MainActivity extends AppCompatActivity {
             dialog.show(getSupportFragmentManager(), AboutDialog.TYPE_USER_AGREEMENT);
         }
 
-        if (savedInstanceState == null) {
-            if (!AuthPresenter.getInstance().isFirstStageAuth()) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_holder, AuthFragment.newInstance(null, null)).commit();
-            }
-        }
-
+        AuthPresenter.getInstance().getFirstStageAuthLiveData().observe(this, authObserver);
         Log.d(AppSeller.TAG + "_MainActivity", "_getFireBaseTag: " + AuthPresenter.getInstance().getFireBaseToken());
     }
 

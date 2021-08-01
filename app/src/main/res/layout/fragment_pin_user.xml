@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="5dp"
+    tools:context=".ui.PinUserFragment">
+
+    <TextView
+        android:id="@+id/title_enter_pin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Введите секретный код пользователя"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="@+id/title_enter_pin"
+        app:layout_constraintTop_toBottomOf="@+id/title_enter_pin"
+        tools:text="Иванов Иван Иванович" />
+
+    <EditText
+        android:id="@+id/pin_edit_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:hint="PIN"
+        android:inputType="numberPassword"
+        android:maxLength="5"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/user_name" />
+
+    <TextView
+        android:id="@+id/title_incorrect_pin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Неверный PIN"
+        android:textColor="@color/header_lt"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="@+id/pin_edit_text"
+        app:layout_constraintRight_toRightOf="@+id/pin_edit_text"
+        app:layout_constraintTop_toBottomOf="@+id/pin_edit_text" />
+
+
+    <TextView
+        android:id="@+id/button_back"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fontFamily="@font/roboto_medium"
+        android:gravity="center"
+        android:text="Назад"
+        android:textColor="@color/icon_lt"
+        app:layout_constraintBottom_toBottomOf="@+id/button_auth"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/button_auth"
+        app:layout_constraintTop_toTopOf="@+id/button_auth" />
+
+    <TextView
+        android:id="@+id/button_auth"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_medium"
+        android:gravity="center"
+        android:text="Вход"
+        android:textColor="@color/header_lt"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/button_back"
+        app:layout_constraintRight_toRightOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
