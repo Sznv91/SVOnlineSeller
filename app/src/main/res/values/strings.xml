@@ -19,4 +19,5 @@
     <string name="title_select_user">Выберите пользователя:</string>
     <string name="button_continue">Продолжить</string>
     <string name="button_update_user_list">Синхронизировать</string>
+    <string name="minute_second_format">%02d:%02d</string>
 </resources>

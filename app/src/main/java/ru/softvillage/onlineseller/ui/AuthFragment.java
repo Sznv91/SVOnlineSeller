@@ -1,7 +1,10 @@
 package ru.softvillage.onlineseller.ui;
 
+import static ru.softvillage.onlineseller.AppSeller.TAG;
+
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,16 +20,25 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 
 import org.jetbrains.annotations.NotNull;
+import org.joda.time.DateTime;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import ru.softvillage.onlineseller.AppSeller;
 import ru.softvillage.onlineseller.R;
+import ru.softvillage.onlineseller.network.auth.entity.ReceiveToApp;
+import ru.softvillage.onlineseller.network.auth.entity.SendFromApp;
 import ru.softvillage.onlineseller.presenter.AppPresenter;
 import ru.softvillage.onlineseller.presenter.AuthPresenter;
 import ru.softvillage.onlineseller.presenter.UiPresenter;
 import ru.softvillage.onlineseller.ui.dialog.AboutDialog;
-
-import static ru.softvillage.onlineseller.AppSeller.TAG;
+import ru.softvillage.onlineseller.util.Md5Calc;
 
 public class AuthFragment extends Fragment implements View.OnClickListener {
+    public static String TAG_LOCAL = "_" + AuthFragment.class.getSimpleName();
+    private Handler timerHandler;
+    private Runnable timerRun;
     private ConstraintLayout main_fragment_auth,
             auth_pin_layout;
     private ImageView auth_big_logo,
@@ -40,7 +52,7 @@ public class AuthFragment extends Fragment implements View.OnClickListener {
             pin_number_3,
             pin_number_4,
             pin_number_5,
-            auth_title_what_i_do,
+            expired_timer,
             auth_title_demo_mode;
 
     Observer<Integer> observer = this::changeColor;
@@ -97,16 +109,19 @@ public class AuthFragment extends Fragment implements View.OnClickListener {
         pin_number_3 = view.findViewById(R.id.pin_number_3);
         pin_number_4 = view.findViewById(R.id.pin_number_4);
         pin_number_5 = view.findViewById(R.id.pin_number_5);
-        auth_title_what_i_do = view.findViewById(R.id.auth_title_what_i_do);
+        expired_timer = view.findViewById(R.id.expired_timer);
         auth_title_demo_mode = view.findViewById(R.id.auth_title_demo_mode);
 
-        auth_title_what_i_do.setOnClickListener(this);
+        expired_timer.setOnClickListener(this);
         auth_title_demo_mode.setOnClickListener(this);
 
         UiPresenter.getInstance().getCurrentThemeLiveData().observe(getViewLifecycleOwner(), observer);
 
         fillToDisplayHeight();
-        initData();
+        getRegCode();
+
+
+        timerHandler = new Handler();
     }
 
     private void fillToDisplayHeight() {
@@ -118,15 +133,12 @@ public class AuthFragment extends Fragment implements View.OnClickListener {
         auth_big_logo.requestLayout();
     }
 
-    private void initData() {
-        int pinCode = AuthPresenter.getInstance().getPinCode();
-        String sPinCode = String.valueOf(pinCode);
-
-        pin_number_1.setText(sPinCode.substring(0, 1));
-        pin_number_2.setText(sPinCode.substring(1, 2));
-        pin_number_3.setText(sPinCode.substring(2, 3));
-        pin_number_4.setText(sPinCode.substring(3, 4));
-        pin_number_5.setText(sPinCode.substring(4, 5));
+    private void setPinOnUi(String pin) {
+        pin_number_1.setText(pin.substring(0, 1));
+        pin_number_2.setText(pin.substring(1, 2));
+        pin_number_3.setText(pin.substring(2, 3));
+        pin_number_4.setText(pin.substring(3, 4));
+        pin_number_5.setText(pin.substring(4, 5));
     }
 
     private void changeColor(int themeStyle) {
@@ -142,7 +154,6 @@ public class AuthFragment extends Fragment implements View.OnClickListener {
             pin_number_3.setTextColor(ContextCompat.getColor(pin_number_3.getContext(), R.color.active_fonts_lt));
             pin_number_4.setTextColor(ContextCompat.getColor(pin_number_4.getContext(), R.color.active_fonts_lt));
             pin_number_5.setTextColor(ContextCompat.getColor(pin_number_5.getContext(), R.color.active_fonts_lt));
-            auth_title_what_i_do.setTextColor(ContextCompat.getColor(auth_title_what_i_do.getContext(), R.color.icon_lt));
             auth_title_demo_mode.setBackground(ContextCompat.getDrawable(auth_title_demo_mode.getContext(), R.drawable.bg_dialog_black));
         } else {
             main_fragment_auth.setBackgroundColor(ContextCompat.getColor(main_fragment_auth.getContext(), R.color.main_dt));
@@ -156,11 +167,9 @@ public class AuthFragment extends Fragment implements View.OnClickListener {
             pin_number_3.setTextColor(ContextCompat.getColor(pin_number_3.getContext(), R.color.active_fonts_dt));
             pin_number_4.setTextColor(ContextCompat.getColor(pin_number_4.getContext(), R.color.active_fonts_dt));
             pin_number_5.setTextColor(ContextCompat.getColor(pin_number_5.getContext(), R.color.active_fonts_dt));
-            auth_title_what_i_do.setTextColor(ContextCompat.getColor(auth_title_what_i_do.getContext(), R.color.icon_dt));
             auth_title_demo_mode.setBackground(ContextCompat.getDrawable(auth_title_demo_mode.getContext(), R.drawable.bg_dialog));
         }
-        auth_title_demo_mode.setTextColor(ContextCompat.getColor(auth_title_what_i_do.getContext(), R.color.header_lt));
-
+        auth_title_demo_mode.setTextColor(ContextCompat.getColor(auth_title_demo_mode.getContext(), R.color.header_lt));
     }
 
     @Override
@@ -173,15 +182,68 @@ public class AuthFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.auth_title_what_i_do:
+            case R.id.expired_timer:
                 AboutDialog dialog = AboutDialog.newInstance(AboutDialog.TYPE_AUTH_WHAT_I_DO);
                 dialog.show(getChildFragmentManager(), AboutDialog.TYPE_AUTH_WHAT_I_DO);
                 break;
             case R.id.auth_title_demo_mode:
-                Log.d(TAG + "_AuthFragment", "click on demo-mode title");
+                Log.d(TAG + TAG_LOCAL, "click on demo-mode title");
                 AuthPresenter.getInstance().setFirstStageAuth(true);
                 AppPresenter.getInstance().populateDemoUser(true);
                 break;
+        }
+    }
+
+    private void getRegCode() {
+        SendFromApp data = SendFromApp.builder()
+                .deviceId(Md5Calc.getHash(AuthPresenter.getInstance().getFireBaseToken()))
+                .fireBaseToken(AuthPresenter.getInstance().getFireBaseToken())
+                .build();
+        AppSeller.getInstance().getNetworkAuthService().registrationDevice(data).enqueue(new Callback<ReceiveToApp>() {
+            @Override
+            public void onResponse(Call<ReceiveToApp> call, Response<ReceiveToApp> response) {
+                setPinOnUi(response.body().getAuthCode());
+                timerRun = new Runnable() {
+                    @Override
+                    public void run() {
+                        if (timerRun != null && timerHandler != null) {
+                            timeTicker(response.body().getGenerateTime());
+                            timerHandler.postDelayed(timerRun, 1000);
+                        }
+
+                    }
+                };
+                timerHandler.postDelayed(timerRun, 1000);
+
+                Log.d(TAG + TAG_LOCAL, "onResponse() called with: call = [" + call + "], response = [" + response + "]");
+            }
+
+            @Override
+            public void onFailure(Call<ReceiveToApp> call, Throwable t) {
+                Log.d(TAG + TAG_LOCAL, "onFailure() called with: call = [" + call + "], t = [" + t + "]");
+            }
+        });
+    }
+
+    private void timeTicker(String generateTime) {
+        Long now = DateTime.now().getMillis();
+        String sNow = String.valueOf(now);
+        String[] sGenerateTimeArray = generateTime.split("\\.");
+        String sGenerateTime = sGenerateTimeArray[0] + sGenerateTimeArray[1];
+        sGenerateTime = sGenerateTime.substring(0, sNow.length());
+
+        Long millisGenerateTime = Long.parseLong(sGenerateTime);
+        int minutes = 0;
+        int seconds = 0;
+        int baseData = (int) ((now - millisGenerateTime) / 1000);
+        minutes = baseData / 60;
+        seconds = baseData - (minutes * 60);
+        int finalMinutes = minutes;
+        int finalSeconds = seconds;
+        try {
+            getActivity().runOnUiThread(() -> expired_timer.setText(String.format(getString(R.string.minute_second_format), finalMinutes, finalSeconds)));
+        } catch (NullPointerException e) {
+            //ignore exception
         }
     }
 }

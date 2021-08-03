@@ -42,13 +42,23 @@ public class AppPresenter {
     @SuppressLint("LongLogTag")
     public void populateDemoUser(boolean turnOnDemoMode) {
         new Thread(() -> {
+            String[] names = new String[]{"Павлов Тимур Егорович",
+                    "Тимофеев Артур Максимович",
+                    "Щукина Мария Владимировна",
+                    "Егоров Мирон Артёмович",
+                    "Баженова Екатерина Фёдоровна",
+                    "Новиков Артемий Дмитриевич",
+                    "Кондрашов Константин Михайлович",
+                    "Федоров Владимир Анатольевич"};
+
             if (turnOnDemoMode) {
-                for (int i = 0; i < 6; i++) {
+                for (int i = names.length - 1; i >= 0; i--) {
+                    String[] namePartial = names[i].split(" ");
                     LocalUser user = new LocalUser();
-                    user.setSurname("Петров" + i);
-                    user.setName("Иван" + (i - 1));
-                    user.setPatronymic("Геннадевич" + (i + 1));
-                    user.setPin(Md5Calc.getHash(String.valueOf((i + 1) * 11111)));
+                    user.setSurname(namePartial[0]);
+                    user.setName(namePartial[1]);
+                    user.setPatronymic(namePartial[2]);
+                    user.setPin(Md5Calc.getHash("0000"));
                     AppSeller.getInstance().getDbHelper().getDataBase().userDao().createUser(user);
                 }
             } else {

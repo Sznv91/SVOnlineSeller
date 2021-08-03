@@ -1,6 +1,8 @@
 package ru.softvillage.onlineseller.presenter;
 
 
+import static ru.softvillage.onlineseller.AppSeller.TAG;
+
 import android.annotation.SuppressLint;
 import android.text.TextUtils;
 import android.util.Log;
@@ -11,7 +13,6 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import lombok.Getter;
-import ru.softvillage.onlineseller.AppSeller;
 import ru.softvillage.onlineseller.dataBase.entity.LocalUser;
 import ru.softvillage.onlineseller.util.Prefs;
 
@@ -46,13 +47,13 @@ public class AuthPresenter {
 
     @SuppressLint("LongLogTag")
     private void init() {
-        firstStageAuth.setValue(Prefs.getInstance().loadBoolean(FIRST_STAGE_AUTH));
-        lastSelectUserId.setValue(Prefs.getInstance().loadLong(LAST_SELECT_USER_ID));
+        firstStageAuth.postValue(Prefs.getInstance().loadBoolean(FIRST_STAGE_AUTH));
+        lastSelectUserId.postValue(Prefs.getInstance().loadLong(LAST_SELECT_USER_ID));
 
         fireBaseToken = Prefs.getInstance().loadString(FIRE_BASE_TOKEN);
         if (TextUtils.isEmpty(fireBaseToken)) {
             FirebaseMessaging.getInstance().getToken().addOnSuccessListener(s -> {
-                Log.d(AppSeller.TAG + "_AuthPresenter", "FireBaseTag: " + s);
+                Log.d(TAG + "_AuthPresenter", "FireBaseTag: " + s);
                 Prefs.getInstance().saveString(FIRE_BASE_TOKEN, s);
                 fireBaseToken = s;
             });
@@ -65,8 +66,9 @@ public class AuthPresenter {
     }
 
     public void setFirstStageAuth(boolean firstStageAuth) {
+        Log.d(TAG, "setFirstStageAuth() called with: firstStageAuth = [" + firstStageAuth + "]");
         if (this.firstStageAuth.getValue() != firstStageAuth) {
-            this.firstStageAuth.setValue(firstStageAuth);
+            this.firstStageAuth.postValue(firstStageAuth);
             Prefs.getInstance().saveBoolean(FIRST_STAGE_AUTH, firstStageAuth);
         }
     }

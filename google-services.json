@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "675388113653",
-    "project_id": "online-seller-fb702",
-    "storage_bucket": "online-seller-fb702.appspot.com"
+    "project_number": "884770192046",
+    "project_id": "mobile-kkt-f4cd2",
+    "storage_bucket": "mobile-kkt-f4cd2.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:675388113653:android:ef3110c543fff3531dbbbc",
+        "mobilesdk_app_id": "1:884770192046:android:84ac888aedaeabed198b3f",
         "android_client_info": {
           "package_name": "ru.softvillage.onlineseller"
         }
       },
       "oauth_client": [
         {
-          "client_id": "675388113653-ggci14d6mfo97rbu1ci4i4tgumekm9p9.apps.googleusercontent.com",
+          "client_id": "884770192046-0jn35am7pjcp9jl0q2fuj7c61ft4707t.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDnKhLKvXofm60FsEIWkfRwxZzoSgiUyZA"
+          "current_key": "AIzaSyAxh73t4SSCSXs2F0A9QfyFyaTQLFX4bxA"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "675388113653-ggci14d6mfo97rbu1ci4i4tgumekm9p9.apps.googleusercontent.com",
+              "client_id": "884770192046-0jn35am7pjcp9jl0q2fuj7c61ft4707t.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

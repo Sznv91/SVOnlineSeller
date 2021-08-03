@@ -39,6 +39,11 @@ dependencies {
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
+    //retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.1.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.0")
+
     //Joda time
     implementation 'joda-time:joda-time:2.10.10'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'

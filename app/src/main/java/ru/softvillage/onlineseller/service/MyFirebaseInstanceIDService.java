@@ -1,5 +1,7 @@
 package ru.softvillage.onlineseller.service;
 
+import static ru.softvillage.onlineseller.AppSeller.TAG;
+
 import android.annotation.SuppressLint;
 import android.util.Log;
 
@@ -7,8 +9,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import ru.softvillage.onlineseller.AppSeller;
-
-import static ru.softvillage.onlineseller.AppSeller.TAG;
+import ru.softvillage.onlineseller.presenter.AuthPresenter;
 
 public class MyFirebaseInstanceIDService extends FirebaseMessagingService {
     @SuppressLint("LongLogTag")
@@ -35,7 +36,9 @@ public class MyFirebaseInstanceIDService extends FirebaseMessagingService {
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG + "_MyFirebaseMessagingService", "Message data payload: " + remoteMessage.getData());
-
+            AuthPresenter.getInstance().setFirstStageAuth(true);
+//            if (remoteMessage.getData().toString().equals("action=AUTH_CONFIRMED"))
+//                AuthPresenter.getInstance().setFirstStageAuth(true);
             /* if (*//* Check if data needs to be processed by long running job *//* true) {
                 // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
                 scheduleJob();
