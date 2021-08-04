@@ -1,6 +1,7 @@
 package ru.softvillage.onlineseller.ui;
 
 import static ru.softvillage.onlineseller.AppSeller.TAG;
+import static ru.softvillage.onlineseller.presenter.AuthPresenter.TEN_MINUTES_IN_MILLIS;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -18,29 +19,27 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import ru.softvillage.onlineseller.AppSeller;
+import lombok.Setter;
 import ru.softvillage.onlineseller.R;
-import ru.softvillage.onlineseller.network.auth.entity.ReceiveToApp;
-import ru.softvillage.onlineseller.network.auth.entity.SendFromApp;
 import ru.softvillage.onlineseller.presenter.AppPresenter;
 import ru.softvillage.onlineseller.presenter.AuthPresenter;
 import ru.softvillage.onlineseller.presenter.UiPresenter;
 import ru.softvillage.onlineseller.ui.dialog.AboutDialog;
-import ru.softvillage.onlineseller.util.Md5Calc;
 
-public class AuthFragment extends Fragment implements View.OnClickListener {
-    public static String TAG_LOCAL = "_" + AuthFragment.class.getSimpleName();
+public class AuthFragmentV2 extends Fragment implements View.OnClickListener {
+    public static String TAG_LOCAL = "_" + AuthFragmentV2.class.getSimpleName();
+    @Setter
     private Handler timerHandler;
+    @Setter
     private Runnable timerRun;
     private ConstraintLayout main_fragment_auth,
-            auth_pin_layout;
+            auth_pin_layout,
+            auth_load_kay_holder;
     private ImageView auth_big_logo,
             auth_pin_background;
     private View pin_divider_1,
@@ -53,48 +52,34 @@ public class AuthFragment extends Fragment implements View.OnClickListener {
             pin_number_4,
             pin_number_5,
             expired_timer,
-            auth_title_demo_mode;
+            auth_title_demo_mode,
+            auth_title_progress;
 
     Observer<Integer> observer = this::changeColor;
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private AuthFragmentViewModel mViewModel;
 
-
-    private String mParam1;
-    private String mParam2;
-
-    public AuthFragment() {
-        // Required empty public constructor
-    }
-
-    public static AuthFragment newInstance(String param1, String param2) {
-        AuthFragment fragment = new AuthFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    public static AuthFragmentV2 newInstance() {
+        return new AuthFragmentV2();
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_auth, container, false);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mViewModel = new ViewModelProvider(AuthFragmentV2.this).get(AuthFragmentViewModel.class);
+        // TODO: Use the ViewModel
     }
 
     @Override
     public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Log.d(TAG + TAG_LOCAL, "onViewCreated() called with: view = [" + view + "], savedInstanceState = [" + savedInstanceState + "]");
         UiPresenter.getInstance().getDrawerManager().showUpButton(false);
         main_fragment_auth = view.findViewById(R.id.main_fragment_auth);
         auth_pin_layout = view.findViewById(R.id.auth_pin_layout);
@@ -111,17 +96,28 @@ public class AuthFragment extends Fragment implements View.OnClickListener {
         pin_number_5 = view.findViewById(R.id.pin_number_5);
         expired_timer = view.findViewById(R.id.expired_timer);
         auth_title_demo_mode = view.findViewById(R.id.auth_title_demo_mode);
+        auth_load_kay_holder = view.findViewById(R.id.auth_load_kay_holder);
+        auth_title_progress = view.findViewById(R.id.auth_title_progress);
 
         expired_timer.setOnClickListener(this);
         auth_title_demo_mode.setOnClickListener(this);
 
         UiPresenter.getInstance().getCurrentThemeLiveData().observe(getViewLifecycleOwner(), observer);
-
         fillToDisplayHeight();
-        getRegCode();
 
 
         timerHandler = new Handler();
+        timerRun = new Runnable() {
+            @Override
+            public void run() {
+                if (timerRun != null && timerHandler != null) {
+                    timeTicker(AuthPresenter.getInstance().getPinCreateTimeStamp(false));
+                    timerHandler.postDelayed(
+                            timerRun, 1000);
+                }
+            }
+        };
+        timerHandler.post(timerRun);
     }
 
     private void fillToDisplayHeight() {
@@ -155,6 +151,8 @@ public class AuthFragment extends Fragment implements View.OnClickListener {
             pin_number_4.setTextColor(ContextCompat.getColor(pin_number_4.getContext(), R.color.active_fonts_lt));
             pin_number_5.setTextColor(ContextCompat.getColor(pin_number_5.getContext(), R.color.active_fonts_lt));
             auth_title_demo_mode.setBackground(ContextCompat.getDrawable(auth_title_demo_mode.getContext(), R.drawable.bg_dialog_black));
+            auth_load_kay_holder.setBackgroundColor(ContextCompat.getColor(auth_load_kay_holder.getContext(), R.color.background_lt));
+            auth_title_progress.setTextColor(ContextCompat.getColor(pin_number_1.getContext(), R.color.active_fonts_lt));
         } else {
             main_fragment_auth.setBackgroundColor(ContextCompat.getColor(main_fragment_auth.getContext(), R.color.main_dt));
             auth_pin_background.setImageDrawable(ContextCompat.getDrawable(auth_pin_background.getContext(), R.drawable.ic_pin_background_dark));
@@ -168,14 +166,10 @@ public class AuthFragment extends Fragment implements View.OnClickListener {
             pin_number_4.setTextColor(ContextCompat.getColor(pin_number_4.getContext(), R.color.active_fonts_dt));
             pin_number_5.setTextColor(ContextCompat.getColor(pin_number_5.getContext(), R.color.active_fonts_dt));
             auth_title_demo_mode.setBackground(ContextCompat.getDrawable(auth_title_demo_mode.getContext(), R.drawable.bg_dialog));
+            auth_load_kay_holder.setBackgroundColor(ContextCompat.getColor(auth_load_kay_holder.getContext(), R.color.main_dt));
+            auth_title_progress.setTextColor(ContextCompat.getColor(pin_number_1.getContext(), R.color.active_fonts_dt));
         }
         auth_title_demo_mode.setTextColor(ContextCompat.getColor(auth_title_demo_mode.getContext(), R.color.header_lt));
-    }
-
-    @Override
-    public void onDestroy() {
-        UiPresenter.getInstance().getCurrentThemeLiveData().removeObserver(observer);
-        super.onDestroy();
     }
 
     @SuppressLint({"NonConstantResourceId", "LongLogTag"})
@@ -194,38 +188,11 @@ public class AuthFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void getRegCode() {
-        SendFromApp data = SendFromApp.builder()
-                .deviceId(Md5Calc.getHash(AuthPresenter.getInstance().getFireBaseToken()))
-                .fireBaseToken(AuthPresenter.getInstance().getFireBaseToken())
-                .build();
-        AppSeller.getInstance().getNetworkAuthService().registrationDevice(data).enqueue(new Callback<ReceiveToApp>() {
-            @Override
-            public void onResponse(Call<ReceiveToApp> call, Response<ReceiveToApp> response) {
-                setPinOnUi(response.body().getAuthCode());
-                timerRun = new Runnable() {
-                    @Override
-                    public void run() {
-                        if (timerRun != null && timerHandler != null) {
-                            timeTicker(response.body().getGenerateTime());
-                            timerHandler.postDelayed(timerRun, 1000);
-                        }
-
-                    }
-                };
-                timerHandler.postDelayed(timerRun, 1000);
-
-                Log.d(TAG + TAG_LOCAL, "onResponse() called with: call = [" + call + "], response = [" + response + "]");
-            }
-
-            @Override
-            public void onFailure(Call<ReceiveToApp> call, Throwable t) {
-                Log.d(TAG + TAG_LOCAL, "onFailure() called with: call = [" + call + "], t = [" + t + "]");
-            }
-        });
-    }
-
     private void timeTicker(String generateTime) {
+        if (generateTime.equals(AuthPresenter.KEY_NOT_RECEIVED)) {
+            AuthPresenter.getInstance().getPinCreateTimeStamp(true);
+            return;
+        }
         Long now = DateTime.now().getMillis();
         String sNow = String.valueOf(now);
         String[] sGenerateTimeArray = generateTime.split("\\.");
@@ -235,15 +202,28 @@ public class AuthFragment extends Fragment implements View.OnClickListener {
         Long millisGenerateTime = Long.parseLong(sGenerateTime);
         int minutes = 0;
         int seconds = 0;
-        int baseData = (int) ((now - millisGenerateTime) / 1000);
+        long delta = now - millisGenerateTime + 1000;
+        delta = TEN_MINUTES_IN_MILLIS - delta;
+        int baseData = (int) delta / 1000;
+
         minutes = baseData / 60;
         seconds = baseData - (minutes * 60);
+        if (baseData < 0) {
+            AuthPresenter.getInstance().getPinCreateTimeStamp(true);
+            requireActivity().runOnUiThread(() -> auth_load_kay_holder.setVisibility(View.VISIBLE));
+            return;
+        }
+        setPinOnUi(AuthPresenter.getInstance().getPin());
         int finalMinutes = minutes;
         int finalSeconds = seconds;
         try {
-            getActivity().runOnUiThread(() -> expired_timer.setText(String.format(getString(R.string.minute_second_format), finalMinutes, finalSeconds)));
+            getActivity().runOnUiThread(() -> {
+                expired_timer.setText(String.format(getString(R.string.minute_second_format), finalMinutes, finalSeconds));
+                auth_load_kay_holder.setVisibility(View.GONE);
+            });
         } catch (NullPointerException e) {
             //ignore exception
         }
     }
+
 }

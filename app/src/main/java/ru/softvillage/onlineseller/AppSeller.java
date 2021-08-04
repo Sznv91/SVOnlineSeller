@@ -5,6 +5,8 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
+import java.util.concurrent.TimeUnit;
+
 import lombok.Getter;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -18,6 +20,7 @@ import ru.softvillage.onlineseller.util.FragmentDispatcher;
 public class AppSeller extends Application {
     public static final String TAG = BuildConfig.APPLICATION_ID;
     public static final String AUTH_BASE_URL = "https://kkt-evotor.ru/";
+    public static final int NETWORK_TIMEOUT = 10;
 
     @Getter
     private static AppSeller instance;
@@ -44,6 +47,10 @@ public class AppSeller extends Application {
 
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .addInterceptor(logging)
+                .readTimeout(NETWORK_TIMEOUT, TimeUnit.SECONDS)
+                .connectTimeout(NETWORK_TIMEOUT, TimeUnit.SECONDS)
+                .callTimeout(NETWORK_TIMEOUT, TimeUnit.SECONDS)
+                .writeTimeout(NETWORK_TIMEOUT, TimeUnit.SECONDS)
                 .build();
 
         networkAuthService = new Retrofit.Builder()

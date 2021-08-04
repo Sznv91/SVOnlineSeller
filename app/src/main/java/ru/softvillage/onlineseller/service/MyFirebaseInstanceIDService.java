@@ -17,6 +17,8 @@ public class MyFirebaseInstanceIDService extends FirebaseMessagingService {
     public void onNewToken(String s) {
         super.onNewToken(s);
         Log.d(AppSeller.TAG + "_MyFirebaseInstanceIDService", "NEW_TOKEN: " + s);
+        AuthPresenter.getInstance().setFireBaseToken(s);
+        //todo отправка обновленного токена на бекенд
 
         // If you want to send messages to this application instance or
         // manage this apps subscriptions on the server side, send the

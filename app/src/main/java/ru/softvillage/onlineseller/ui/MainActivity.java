@@ -1,5 +1,7 @@
 package ru.softvillage.onlineseller.ui;
 
+import static ru.softvillage.onlineseller.AppSeller.TAG;
+
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +18,8 @@ import ru.softvillage.onlineseller.ui.dialog.AboutDialog;
 import ru.softvillage.onlineseller.ui.left_menu.DrawerMenuManager;
 
 public class MainActivity extends AppCompatActivity {
+    public static final String TAG_LOCAL = "_" + MainActivity.class.getSimpleName();
+    private AuthFragmentV2 authFragment;
 
     private Observer<Boolean> authObserver = new Observer<Boolean>() {
         @Override
@@ -23,7 +27,9 @@ public class MainActivity extends AppCompatActivity {
             if (firstStageAuth) {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_holder, SelectUserFragment.newInstance(null, null)).commit();
             } else {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_holder, AuthFragment.newInstance(null, null)).commit();
+                Log.d(TAG + TAG_LOCAL, "onChanged() called with: firstStageAuth = [" + firstStageAuth + "]");
+                authFragment = AuthFragmentV2.newInstance();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_holder, authFragment).commit();
             }
         }
     };
@@ -41,16 +47,19 @@ public class MainActivity extends AppCompatActivity {
             dialog.setCancelable(false);
             dialog.show(getSupportFragmentManager(), AboutDialog.TYPE_USER_AGREEMENT);
         }
-
         AuthPresenter.getInstance().getFirstStageAuthLiveData().observe(this, authObserver);
-        Log.d(AppSeller.TAG + "_MainActivity", "_getFireBaseTag: " + AuthPresenter.getInstance().getFireBaseToken());
+        Log.d(TAG + TAG_LOCAL, "_getFireBaseTag: " + AuthPresenter.getInstance().getFireBaseToken());
     }
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         AppSeller.getInstance().getFragmentDispatcher().setActivity(null);
         UiPresenter.getInstance().setIThemeChangeMainActivity(null);
         UiPresenter.getInstance().setDrawerMenuManager(null);
-        super.onDestroy();
+        if (authFragment != null) {
+            authFragment.setTimerHandler(null);
+            authFragment.setTimerRun(null);
+        }
     }
 }

@@ -47,6 +47,8 @@ dependencies {
     //Joda time
     implementation 'joda-time:joda-time:2.10.10'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
 
     /*Lombook*/
     compileOnly 'org.projectlombok:lombok:1.18.16'

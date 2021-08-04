@@ -20,4 +20,5 @@
     <string name="button_continue">Продолжить</string>
     <string name="button_update_user_list">Синхронизировать</string>
     <string name="minute_second_format">%02d:%02d</string>
+    <string name="auth_title_progress">Подождите, получаем новый код авторизации</string>
 </resources>

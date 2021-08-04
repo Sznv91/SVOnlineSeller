@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/main_lt"
-    tools:context=".ui.AuthFragment">
+    tools:context=".ui.AuthFragmentV2">
 
     <ImageView
         android:id="@+id/auth_big_logo"
@@ -156,6 +156,35 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/auth_pin_layout"
         tools:text="00:22" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        tools:visibility="gone"
+        android:id="@+id/auth_load_kay_holder"
+        android:background="@color/active_fonts_dt"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/auth_big_logo"
+        app:layout_constraintBottom_toTopOf="@+id/auth_title_demo_mode">
+        <ProgressBar
+            android:indeterminateTint="@color/icon_dt"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:id="@+id/auth_progress_bar"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            app:autoSizeTextType="uniform"
+            android:id="@+id/auth_title_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/auth_progress_bar"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:text="@string/auth_title_progress"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/auth_title_demo_mode"
