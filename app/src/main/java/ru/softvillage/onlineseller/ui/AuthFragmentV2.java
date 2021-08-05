@@ -52,6 +52,7 @@ public class AuthFragmentV2 extends Fragment implements View.OnClickListener {
             pin_number_4,
             pin_number_5,
             expired_timer,
+            auth_hint_title,
             auth_title_demo_mode,
             auth_title_progress;
 
@@ -95,11 +96,12 @@ public class AuthFragmentV2 extends Fragment implements View.OnClickListener {
         pin_number_4 = view.findViewById(R.id.pin_number_4);
         pin_number_5 = view.findViewById(R.id.pin_number_5);
         expired_timer = view.findViewById(R.id.expired_timer);
+        auth_hint_title = view.findViewById(R.id.auth_hint_title);
         auth_title_demo_mode = view.findViewById(R.id.auth_title_demo_mode);
         auth_load_kay_holder = view.findViewById(R.id.auth_load_kay_holder);
         auth_title_progress = view.findViewById(R.id.auth_title_progress);
 
-        expired_timer.setOnClickListener(this);
+        auth_hint_title.setOnClickListener(this);
         auth_title_demo_mode.setOnClickListener(this);
 
         UiPresenter.getInstance().getCurrentThemeLiveData().observe(getViewLifecycleOwner(), observer);
@@ -150,7 +152,8 @@ public class AuthFragmentV2 extends Fragment implements View.OnClickListener {
             pin_number_3.setTextColor(ContextCompat.getColor(pin_number_3.getContext(), R.color.active_fonts_lt));
             pin_number_4.setTextColor(ContextCompat.getColor(pin_number_4.getContext(), R.color.active_fonts_lt));
             pin_number_5.setTextColor(ContextCompat.getColor(pin_number_5.getContext(), R.color.active_fonts_lt));
-            auth_title_demo_mode.setBackground(ContextCompat.getDrawable(auth_title_demo_mode.getContext(), R.drawable.bg_dialog_black));
+            auth_hint_title.setTextColor(ContextCompat.getColor(auth_hint_title.getContext(), R.color.active_fonts_lt));
+            auth_title_demo_mode.setBackground(ContextCompat.getDrawable(auth_title_demo_mode.getContext(), R.drawable.bg_button));
             auth_load_kay_holder.setBackgroundColor(ContextCompat.getColor(auth_load_kay_holder.getContext(), R.color.background_lt));
             auth_title_progress.setTextColor(ContextCompat.getColor(pin_number_1.getContext(), R.color.active_fonts_lt));
         } else {
@@ -165,18 +168,19 @@ public class AuthFragmentV2 extends Fragment implements View.OnClickListener {
             pin_number_3.setTextColor(ContextCompat.getColor(pin_number_3.getContext(), R.color.active_fonts_dt));
             pin_number_4.setTextColor(ContextCompat.getColor(pin_number_4.getContext(), R.color.active_fonts_dt));
             pin_number_5.setTextColor(ContextCompat.getColor(pin_number_5.getContext(), R.color.active_fonts_dt));
-            auth_title_demo_mode.setBackground(ContextCompat.getDrawable(auth_title_demo_mode.getContext(), R.drawable.bg_dialog));
+            auth_hint_title.setTextColor(ContextCompat.getColor(auth_hint_title.getContext(), R.color.active_fonts_dt));
+            auth_title_demo_mode.setBackground(ContextCompat.getDrawable(auth_title_demo_mode.getContext(), R.drawable.bg_button));
             auth_load_kay_holder.setBackgroundColor(ContextCompat.getColor(auth_load_kay_holder.getContext(), R.color.main_dt));
             auth_title_progress.setTextColor(ContextCompat.getColor(pin_number_1.getContext(), R.color.active_fonts_dt));
         }
-        auth_title_demo_mode.setTextColor(ContextCompat.getColor(auth_title_demo_mode.getContext(), R.color.header_lt));
+        auth_title_demo_mode.setTextColor(ContextCompat.getColor(auth_title_demo_mode.getContext(), R.color.icon_lt));
     }
 
     @SuppressLint({"NonConstantResourceId", "LongLogTag"})
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.expired_timer:
+            case R.id.auth_hint_title:
                 AboutDialog dialog = AboutDialog.newInstance(AboutDialog.TYPE_AUTH_WHAT_I_DO);
                 dialog.show(getChildFragmentManager(), AboutDialog.TYPE_AUTH_WHAT_I_DO);
                 break;
