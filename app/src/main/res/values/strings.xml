@@ -11,14 +11,17 @@
     <string name="about_menu_title_user_agreement">Пользовательское соглашение</string>
     <string name="about_menu_title_licenses">Лицензии</string>
     <string name="about_menu_title_data_protection">Защита данных</string>
+    <string name="about_dialog_reg_hint">Полную инструкцию вы можете получить на сайте отсканировав QR-код</string>
+    <string name="about_dialog_reg_link">https://soft-village.ru/online-kkt/how-to-register</string>
     <string name="exit_up">ВЫХОД</string>
     <string name="navigation_drawer_open">navi_open</string>
     <string name="navigation_drawer_close">navi_close</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_select_user">Выберите пользователя:</string>
-    <string name="button_continue">Продолжить</string>
-    <string name="button_update_user_list">Синхронизировать</string>
+    <string name="button_continue">ПРОДОЛЖИТЬ</string>
     <string name="minute_second_format">%02d:%02d</string>
     <string name="auth_title_progress">Подождите, получаем новый код авторизации</string>
+    <string name="title_last_auth_date">Последний вход в систему</string>
+    <string name="user_pin_start_value">_</string>
 </resources>

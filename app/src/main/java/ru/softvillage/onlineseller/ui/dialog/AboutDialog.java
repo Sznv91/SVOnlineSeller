@@ -135,7 +135,8 @@ public class AboutDialog extends DialogFragment {
                 break;
             case TYPE_AUTH_WHAT_I_DO:
                 about_dialog_title.setText("Регистрация Пин-кода");
-                dIcon = ContextCompat.getDrawable(about_dialog_icon.getContext(), R.drawable.ic_icon_licenses);
+                dIcon = ContextCompat.getDrawable(about_dialog_icon.getContext(), R.drawable.qr_code_how_to_register_light);
+                about_dialog_content.setText(getText(R.string.about_dialog_reg_hint));
                 break;
             default:
                 about_dialog_title.setText("unexpected type");
@@ -189,10 +190,12 @@ public class AboutDialog extends DialogFragment {
         }
 
         if (dIcon != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            dIcon.setColorFilter(new BlendModeColorFilter(iconColor, BlendMode.SRC_IN));
+            if (!dialogType.equals(TYPE_AUTH_WHAT_I_DO))
+                dIcon.setColorFilter(new BlendModeColorFilter(iconColor, BlendMode.SRC_IN));
         } else {
             if (dIcon != null)
-                dIcon.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN);
+                if (!dialogType.equals(TYPE_AUTH_WHAT_I_DO))
+                    dIcon.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN);
         }
 
     }

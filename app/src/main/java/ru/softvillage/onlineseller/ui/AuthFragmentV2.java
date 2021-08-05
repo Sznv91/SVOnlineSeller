@@ -198,12 +198,8 @@ public class AuthFragmentV2 extends Fragment implements View.OnClickListener {
             return;
         }
         Long now = DateTime.now().getMillis();
-        String sNow = String.valueOf(now);
-        String[] sGenerateTimeArray = generateTime.split("\\.");
-        String sGenerateTime = sGenerateTimeArray[0] + sGenerateTimeArray[1];
-        sGenerateTime = sGenerateTime.substring(0, sNow.length());
-
-        Long millisGenerateTime = Long.parseLong(sGenerateTime);
+        String sGenerateTime = generateTime + "000";
+        Long millisGenerateTime = Long.parseLong(sGenerateTime) - 2000L;
         int minutes = 0;
         int seconds = 0;
         long delta = now - millisGenerateTime + 1000;
@@ -214,7 +210,11 @@ public class AuthFragmentV2 extends Fragment implements View.OnClickListener {
         seconds = baseData - (minutes * 60);
         if (baseData < 0) {
             AuthPresenter.getInstance().getPinCreateTimeStamp(true);
-            requireActivity().runOnUiThread(() -> auth_load_kay_holder.setVisibility(View.VISIBLE));
+            try {
+                requireActivity().runOnUiThread(() -> auth_load_kay_holder.setVisibility(View.VISIBLE));
+            } catch (IllegalStateException e){
+                //ignore
+            }
             return;
         }
         setPinOnUi(AuthPresenter.getInstance().getPin());

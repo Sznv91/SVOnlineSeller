@@ -5,57 +5,182 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="5dp"
     tools:context=".ui.PinUserFragment">
 
     <TextView
         android:id="@+id/title_enter_pin"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_medium"
         android:text="Введите секретный код пользователя"
+        android:textAlignment="center"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toTopOf="@+id/auth_pin_background"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="@+id/title_enter_pin"
+        android:fontFamily="@font/roboto_bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title_enter_pin"
         tools:text="Иванов Иван Иванович" />
 
     <EditText
         android:id="@+id/pin_edit_text"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:cursorVisible="false"
         android:gravity="center"
-        android:hint="PIN"
         android:inputType="numberPassword"
-        android:maxLength="5"
+        android:maxLength="4"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/auth_pin_background"
+        app:layout_constraintLeft_toLeftOf="@+id/auth_pin_background"
+        app:layout_constraintRight_toRightOf="@+id/auth_pin_background"
+        app:layout_constraintTop_toTopOf="@+id/auth_pin_background" />
+
+    <TextView
+        android:id="@+id/user_pin_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:fontFamily="@font/roboto_medium"
+        android:text="PIN"
+        android:textColor="@color/active_fonts_lt"
+        app:layout_constraintBottom_toTopOf="@+id/auth_pin_background"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <ImageView
+        android:id="@+id/auth_pin_background"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@color/main_lt"
+        android:src="@drawable/ic_pin_background_light"
+        app:layout_constraintBottom_toTopOf="@+id/button_auth"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_name" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/pin_divider_1"
+        android:layout_width="2dp"
+        android:layout_height="50dp"
+        android:background="@color/divider_lt"
+        app:layout_constraintBottom_toBottomOf="@+id/auth_pin_background"
+        app:layout_constraintLeft_toLeftOf="@+id/auth_pin_background"
+        app:layout_constraintRight_toLeftOf="@+id/pin_divider_2"
+        app:layout_constraintTop_toTopOf="@+id/auth_pin_background" />
+
+    <View
+        android:id="@+id/pin_divider_2"
+        android:layout_width="2dp"
+        android:layout_height="50dp"
+        android:background="@color/divider_lt"
+        app:layout_constraintBottom_toBottomOf="@+id/auth_pin_background"
+        app:layout_constraintLeft_toRightOf="@+id/pin_divider_1"
+        app:layout_constraintRight_toLeftOf="@+id/pin_divider_3"
+        app:layout_constraintTop_toTopOf="@+id/auth_pin_background" />
+
+    <View
+        android:id="@+id/pin_divider_3"
+        android:layout_width="2dp"
+        android:layout_height="50dp"
+        android:background="@color/divider_lt"
+        app:layout_constraintBottom_toBottomOf="@+id/auth_pin_background"
+        app:layout_constraintLeft_toRightOf="@+id/pin_divider_2"
+        app:layout_constraintRight_toRightOf="@+id/auth_pin_background"
+        app:layout_constraintTop_toTopOf="@+id/auth_pin_background" />
+
+    <TextView
+        android:id="@+id/pin_number_1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fontFamily="@font/roboto_medium"
+        android:gravity="center"
+        android:text="@string/user_pin_start_value"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toBottomOf="@+id/pin_divider_1"
+        app:layout_constraintLeft_toLeftOf="@+id/auth_pin_background"
+        app:layout_constraintRight_toLeftOf="@+id/pin_divider_1"
+        app:layout_constraintTop_toTopOf="@+id/pin_divider_1"
+        tools:text="*" />
+
+    <TextView
+        android:id="@+id/pin_number_2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fontFamily="@font/roboto_medium"
+        android:gravity="center"
+        android:text="@string/user_pin_start_value"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toBottomOf="@+id/pin_divider_1"
+        app:layout_constraintLeft_toRightOf="@+id/pin_divider_1"
+        app:layout_constraintRight_toLeftOf="@+id/pin_divider_2"
+        app:layout_constraintTop_toTopOf="@+id/pin_divider_1"
+        tools:text="*" />
+
+    <TextView
+        android:id="@+id/pin_number_3"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fontFamily="@font/roboto_medium"
+        android:gravity="center"
+        android:text="@string/user_pin_start_value"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toBottomOf="@+id/pin_divider_1"
+        app:layout_constraintLeft_toRightOf="@+id/pin_divider_2"
+        app:layout_constraintRight_toLeftOf="@+id/pin_divider_3"
+        app:layout_constraintTop_toTopOf="@+id/pin_divider_1"
+        tools:text="3" />
+
+    <TextView
+        android:id="@+id/pin_number_4"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fontFamily="@font/roboto_medium"
+        android:gravity="center"
+        android:text="@string/user_pin_start_value"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toBottomOf="@+id/pin_divider_1"
+        app:layout_constraintLeft_toRightOf="@+id/pin_divider_3"
+        app:layout_constraintRight_toRightOf="@id/auth_pin_background"
+        app:layout_constraintTop_toTopOf="@+id/pin_divider_1"
+        tools:text="_" />
 
     <TextView
         android:id="@+id/title_incorrect_pin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/roboto_medium"
         android:text="Неверный PIN"
         android:textColor="@color/header_lt"
         android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="@+id/pin_edit_text"
         app:layout_constraintRight_toRightOf="@+id/pin_edit_text"
-        app:layout_constraintTop_toBottomOf="@+id/pin_edit_text" />
+        app:layout_constraintTop_toBottomOf="@+id/auth_pin_background" />
 
 
     <TextView
         android:id="@+id/button_back"
-        android:layout_width="0dp"
+        android:layout_width="120dp"
         android:layout_height="0dp"
+        android:background="@drawable/bg_button_orange"
         android:fontFamily="@font/roboto_medium"
         android:gravity="center"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
         android:text="Назад"
-        android:textColor="@color/icon_lt"
+        android:textColor="@color/header_lt"
+        android:textSize="22sp"
         app:layout_constraintBottom_toBottomOf="@+id/button_auth"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/button_auth"
@@ -63,12 +188,18 @@
 
     <TextView
         android:id="@+id/button_auth"
-        android:layout_width="0dp"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/bg_button"
         android:fontFamily="@font/roboto_medium"
         android:gravity="center"
+        android:padding="10dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
         android:text="Вход"
-        android:textColor="@color/header_lt"
+        android:textColor="@color/icon_dt"
+        android:textSize="22sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/button_back"
         app:layout_constraintRight_toRightOf="parent" />

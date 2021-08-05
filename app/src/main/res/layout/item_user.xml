@@ -1,42 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
 
-    app:cardCornerRadius="5dp"
-    app:strokeColor="@color/header_lt"
-    app:strokeWidth="2dp">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/user_name"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="3dp">
+        android:layout_marginStart="9dp"
+        android:fontFamily="@font/roboto_medium"
+        android:textColor="@color/fonts_lt"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Иванов Иван Иванович" />
 
-        <TextView
-            android:id="@+id/user_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="1dp"
-            app:autoSizeTextType="uniform"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Иванов Иван Иванович" />
+    <TextView
+        android:id="@+id/title_last_auth_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_light"
+        android:maxLines="1"
+        android:text="@string/title_last_auth_date"
+        android:textColor="@color/active_fonts_lt"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintLeft_toLeftOf="@+id/user_name"
+        app:layout_constraintRight_toLeftOf="@+id/content_last_auth_date"
+        app:layout_constraintTop_toBottomOf="@+id/user_name" />
 
-        <TextView
-            android:id="@+id/last_auth_date"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="1dp"
-            android:maxLines="1"
-            app:autoSizeTextType="uniform"
-            app:layout_constraintLeft_toLeftOf="@+id/user_name"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/user_name"
-            tools:text="Последний вход в систему: 12.11.2010" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</com.google.android.material.card.MaterialCardView>
+    <TextView
+        android:paddingStart="3dp"
+        android:layout_marginEnd="9dp"
+        app:autoSizeTextType="uniform"
+        android:id="@+id/content_last_auth_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_medium"
+        android:textColor="@color/fonts_lt"
+        app:layout_constraintRight_toRightOf="parent"
+        android:textAlignment="textEnd"
+        app:layout_constraintLeft_toRightOf="@+id/title_last_auth_date"
+        app:layout_constraintTop_toTopOf="@+id/title_last_auth_date"
+        tools:text="01.08.2021" />
+</androidx.constraintlayout.widget.ConstraintLayout>

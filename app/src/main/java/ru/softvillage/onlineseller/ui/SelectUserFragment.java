@@ -14,6 +14,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -30,7 +31,6 @@ public class SelectUserFragment extends Fragment {
 
     private ConstraintLayout main;
     private TextView title_select_user,
-            button_update_user_list,
             button_continue;
     private RecyclerView user_select_recycler;
 
@@ -77,7 +77,6 @@ public class SelectUserFragment extends Fragment {
         UiPresenter.getInstance().getDrawerManager().showUpButton(false);
         main = view.findViewById(R.id.main);
         title_select_user = view.findViewById(R.id.title_select_user);
-        button_update_user_list = view.findViewById(R.id.button_update_user_list);
         button_continue = view.findViewById(R.id.button_continue);
         user_select_recycler = view.findViewById(R.id.user_select_recycler);
 
@@ -94,13 +93,16 @@ public class SelectUserFragment extends Fragment {
                 user -> {
                     Log.d(AppSeller.TAG + "_SelectUserFragment", "adapter callback. Click on user: " + user.toString());
                 });
+        DividerItemDecoration divider = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
+        divider.setDrawable(getContext().getDrawable(R.drawable.line_divider));
+        user_select_recycler.addItemDecoration(divider);
+
         user_select_recycler.setAdapter(adapter);
         AppSeller.getInstance().getDbHelper().getDataBase().userDao().getAllUserLiveData().observe(this.getViewLifecycleOwner(), adapter::setItems);
     }
 
     @SuppressLint("LongLogTag")
     private void initButtons() {
-        button_update_user_list.setOnClickListener(v -> Log.d(AppSeller.TAG + "_SelectUserFragment", "tap On Button update_user_list"));
         button_continue.setOnClickListener(v -> {
             Log.d(AppSeller.TAG + "_SelectUserFragment", "tap On Button Continue ");
             if (AuthPresenter.getInstance().getLastSelectUserLiveData().getValue() != null) {
@@ -116,23 +118,22 @@ public class SelectUserFragment extends Fragment {
     private void changeTheme(int colorStyle) {
         AuthPresenter.getInstance().getLastSelectUserLiveData().observe(this.getViewLifecycleOwner(), lastSelectUserObserver);
         if (colorStyle == UiPresenter.THEME_LIGHT) {
-            main.setBackgroundColor(ContextCompat.getColor(main.getContext(), R.color.background_lt));
-            title_select_user.setTextColor(ContextCompat.getColor(title_select_user.getContext(), R.color.fonts_lt));
+            main.setBackgroundColor(ContextCompat.getColor(main.getContext(), R.color.main_lt));
+            title_select_user.setTextColor(ContextCompat.getColor(title_select_user.getContext(), R.color.active_fonts_lt));
             if (AuthPresenter.getInstance().getLastSelectUserLiveData().getValue() != null) {
-                button_continue.setTextColor(ContextCompat.getColor(button_continue.getContext(), R.color.header_lt));
+                button_continue.setTextColor(ContextCompat.getColor(button_continue.getContext(), R.color.icon_dt));
             } else {
                 button_continue.setTextColor(ContextCompat.getColor(button_continue.getContext(), R.color.active_fonts_lt));
             }
         } else {
             main.setBackgroundColor(ContextCompat.getColor(main.getContext(), R.color.main_dt));
-            title_select_user.setTextColor(ContextCompat.getColor(title_select_user.getContext(), R.color.fonts_dt));
+            title_select_user.setTextColor(ContextCompat.getColor(title_select_user.getContext(), R.color.active_fonts_dt));
             if (AuthPresenter.getInstance().getLastSelectUserLiveData().getValue() != null) {
-                button_continue.setTextColor(ContextCompat.getColor(button_continue.getContext(), R.color.header_lt));
+                button_continue.setTextColor(ContextCompat.getColor(button_continue.getContext(), R.color.icon_dt));
             } else {
                 button_continue.setTextColor(ContextCompat.getColor(button_continue.getContext(), R.color.active_fonts_dt));
             }
         }
-        button_update_user_list.setTextColor(ContextCompat.getColor(button_update_user_list.getContext(), R.color.icon_lt));
 
     }
 }

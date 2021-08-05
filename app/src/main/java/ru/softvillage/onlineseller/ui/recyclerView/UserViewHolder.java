@@ -4,6 +4,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,8 +18,10 @@ import ru.softvillage.onlineseller.dataBase.entity.LocalUser;
 import ru.softvillage.onlineseller.presenter.UiPresenter;
 
 public class UserViewHolder extends RecyclerView.ViewHolder {
-    private MaterialCardView main;
-    private TextView user_name, last_auth_date;
+    private ConstraintLayout main;
+    private TextView user_name,
+            last_auth_date,
+            content_last_auth_date;
     private boolean isSelect = false;
 
 
@@ -28,7 +31,8 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
         main = itemView.findViewById(R.id.main);
         user_name = itemView.findViewById(R.id.user_name);
-        last_auth_date = itemView.findViewById(R.id.last_auth_date);
+        last_auth_date = itemView.findViewById(R.id.title_last_auth_date);
+        content_last_auth_date = itemView.findViewById(R.id.content_last_auth_date);
 
         UiPresenter.getInstance().getCurrentThemeLiveData().observeForever(colorThemeObserver);
     }
@@ -36,9 +40,9 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
     public void bind(LocalUser user) {
         user_name.setText(String.format("%s %s %s", user.getSurname(), user.getName(), user.getPatronymic()));
         if (user.getLastDateAuth() != null) {
-            last_auth_date.setText(String.format("Последний вход в систему: %s", user.getLastDateAuth().toString("dd.MM.YYYY")));
+            content_last_auth_date.setText(user.getLastDateAuth().toString("dd.MM.YYYY"));
         } else {
-            last_auth_date.setText(String.format("Последний вход в систему: %s", "не производился"));
+            content_last_auth_date.setText("не производился");
         }
     }
 
@@ -59,25 +63,23 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
     private void changeColor(int colorStyle) {
         if (colorStyle == UiPresenter.THEME_LIGHT) {
             if (isSelect) {
-                main.setStrokeColor(ContextCompat.getColor(main.getContext(), R.color.divider_dt));
-                main.setCardBackgroundColor(ContextCompat.getColor(main.getContext(), R.color.background_dt));
+                main.setBackgroundColor(ContextCompat.getColor(main.getContext(), R.color.background_dt));
                 user_name.setTextColor(ContextCompat.getColor(user_name.getContext(), R.color.fonts_dt));
-                last_auth_date.setTextColor(ContextCompat.getColor(last_auth_date.getContext(), R.color.fonts_dt));
+                last_auth_date.setTextColor(ContextCompat.getColor(last_auth_date.getContext(), R.color.active_fonts_dt));
+                content_last_auth_date.setTextColor(ContextCompat.getColor(user_name.getContext(), R.color.fonts_dt));
             } else {
-                main.setCardBackgroundColor(ContextCompat.getColor(main.getContext(), R.color.main_lt));
-                main.setStrokeColor(ContextCompat.getColor(main.getContext(), R.color.divider_lt));
+                main.setBackgroundColor(ContextCompat.getColor(main.getContext(), R.color.background_lt));
                 user_name.setTextColor(ContextCompat.getColor(user_name.getContext(), R.color.fonts_lt));
-                last_auth_date.setTextColor(ContextCompat.getColor(last_auth_date.getContext(), R.color.fonts_lt));
+                last_auth_date.setTextColor(ContextCompat.getColor(last_auth_date.getContext(), R.color.active_fonts_lt));
+                content_last_auth_date.setTextColor(ContextCompat.getColor(user_name.getContext(), R.color.fonts_lt));
             }
         } else {
             if (isSelect) {
-                main.setCardBackgroundColor(ContextCompat.getColor(main.getContext(), R.color.main_lt));
-                main.setStrokeColor(ContextCompat.getColor(main.getContext(), R.color.divider_lt));
+                main.setBackgroundColor(ContextCompat.getColor(main.getContext(), R.color.background_lt));
                 user_name.setTextColor(ContextCompat.getColor(user_name.getContext(), R.color.fonts_lt));
                 last_auth_date.setTextColor(ContextCompat.getColor(last_auth_date.getContext(), R.color.fonts_lt));
             } else {
-                main.setStrokeColor(ContextCompat.getColor(main.getContext(), R.color.divider_dt));
-                main.setCardBackgroundColor(ContextCompat.getColor(main.getContext(), R.color.background_dt));
+                main.setBackgroundColor(ContextCompat.getColor(main.getContext(), R.color.background_dt));
                 user_name.setTextColor(ContextCompat.getColor(user_name.getContext(), R.color.fonts_dt));
                 last_auth_date.setTextColor(ContextCompat.getColor(last_auth_date.getContext(), R.color.fonts_dt));
             }

@@ -1,5 +1,7 @@
 package ru.softvillage.onlineseller.ui;
 
+import static ru.softvillage.onlineseller.AppSeller.TAG;
+
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.Editable;
@@ -9,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,7 +39,17 @@ public class PinUserFragment extends Fragment {
             user_name,
             title_incorrect_pin,
             button_back,
-            button_auth;
+            button_auth,
+
+    user_pin_title,
+            pin_number_1,
+            pin_number_2,
+            pin_number_3,
+            pin_number_4;
+    private ImageView auth_pin_background;
+    private View pin_divider_1,
+            pin_divider_2,
+            pin_divider_3;
     private Observer<Integer> colorStyleObserver = this::changeTheme;
 
     private static final String ARG_PARAM1 = "param1";
@@ -86,6 +99,16 @@ public class PinUserFragment extends Fragment {
         button_back = view.findViewById(R.id.button_back);
         button_auth = view.findViewById(R.id.button_auth);
 
+        user_pin_title = view.findViewById(R.id.user_pin_title);
+        pin_number_1 = view.findViewById(R.id.pin_number_1);
+        pin_number_2 = view.findViewById(R.id.pin_number_2);
+        pin_number_3 = view.findViewById(R.id.pin_number_3);
+        pin_number_4 = view.findViewById(R.id.pin_number_4);
+        pin_divider_1 = view.findViewById(R.id.pin_divider_1);
+        pin_divider_2 = view.findViewById(R.id.pin_divider_2);
+        pin_divider_3 = view.findViewById(R.id.pin_divider_3);
+        auth_pin_background = view.findViewById(R.id.auth_pin_background);
+
         initText();
         changeTheme(UiPresenter.getInstance().getCurrentTheme());
 //        UiPresenter.getInstance().getCurrentThemeLiveData().observe(this.getViewLifecycleOwner(), colorStyleObserver);
@@ -102,6 +125,8 @@ public class PinUserFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 title_incorrect_pin.setVisibility(View.GONE);
+                Log.d(TAG, "onTextChanged: s:" + s.toString());
+                changePinView(s.length());
             }
 
             @Override
@@ -126,9 +151,10 @@ public class PinUserFragment extends Fragment {
             user.setLastDateAuth(LocalDate.now());
             AppSeller.getInstance().getDbHelper().updateUser(user);
         } else {
+            pin_edit_text.setText("");
             title_incorrect_pin.setVisibility(View.VISIBLE);
         }
-        Log.d(AppSeller.TAG + "_PinUserFragment", "clickAuthButton. v.getText(): " + v.getText() + "\n HashCalc: " + Md5Calc.getHash(v.getText().toString()));
+        Log.d(TAG + "_PinUserFragment", "clickAuthButton. v.getText(): " + v.getText() + "\n HashCalc: " + Md5Calc.getHash(v.getText().toString()));
     }
 
     private void initText() {
@@ -141,10 +167,65 @@ public class PinUserFragment extends Fragment {
             main.setBackgroundColor(ContextCompat.getColor(main.getContext(), R.color.background_lt));
             title_enter_pin.setTextColor(ContextCompat.getColor(title_enter_pin.getContext(), R.color.fonts_lt));
             user_name.setTextColor(ContextCompat.getColor(user_name.getContext(), R.color.fonts_lt));
+
+            user_pin_title.setTextColor(ContextCompat.getColor(user_pin_title.getContext(), R.color.active_fonts_lt));
+            pin_number_1.setTextColor(ContextCompat.getColor(pin_number_1.getContext(), R.color.active_fonts_lt));
+            pin_number_2.setTextColor(ContextCompat.getColor(pin_number_2.getContext(), R.color.active_fonts_lt));
+            pin_number_3.setTextColor(ContextCompat.getColor(pin_number_3.getContext(), R.color.active_fonts_lt));
+            pin_number_4.setTextColor(ContextCompat.getColor(pin_number_4.getContext(), R.color.active_fonts_lt));
+            pin_divider_1.setBackgroundColor(ContextCompat.getColor(pin_divider_1.getContext(), R.color.divider_lt));
+            pin_divider_2.setBackgroundColor(ContextCompat.getColor(pin_divider_2.getContext(), R.color.divider_lt));
+            pin_divider_3.setBackgroundColor(ContextCompat.getColor(pin_divider_3.getContext(), R.color.divider_lt));
+            auth_pin_background.setBackgroundColor(ContextCompat.getColor(auth_pin_background.getContext(), R.color.main_lt));
         } else {
             main.setBackgroundColor(ContextCompat.getColor(main.getContext(), R.color.main_dt));
             title_enter_pin.setTextColor(ContextCompat.getColor(title_enter_pin.getContext(), R.color.fonts_dt));
             user_name.setTextColor(ContextCompat.getColor(user_name.getContext(), R.color.fonts_dt));
+
+            user_pin_title.setTextColor(ContextCompat.getColor(user_pin_title.getContext(), R.color.active_fonts_dt));
+            pin_number_1.setTextColor(ContextCompat.getColor(pin_number_1.getContext(), R.color.active_fonts_dt));
+            pin_number_2.setTextColor(ContextCompat.getColor(pin_number_2.getContext(), R.color.active_fonts_dt));
+            pin_number_3.setTextColor(ContextCompat.getColor(pin_number_3.getContext(), R.color.active_fonts_dt));
+            pin_number_4.setTextColor(ContextCompat.getColor(pin_number_4.getContext(), R.color.active_fonts_dt));
+            pin_divider_1.setBackgroundColor(ContextCompat.getColor(pin_divider_1.getContext(), R.color.divider_dt));
+            pin_divider_2.setBackgroundColor(ContextCompat.getColor(pin_divider_2.getContext(), R.color.divider_dt));
+            pin_divider_3.setBackgroundColor(ContextCompat.getColor(pin_divider_3.getContext(), R.color.divider_dt));
+            auth_pin_background.setBackgroundColor(ContextCompat.getColor(auth_pin_background.getContext(), R.color.background_dt));
+        }
+    }
+
+    private void changePinView(int pinLength) {
+        switch (pinLength) {
+            case 0:
+                pin_number_1.setText("_");
+                pin_number_2.setText("_");
+                pin_number_3.setText("_");
+                pin_number_4.setText("_");
+                break;
+            case 1:
+                pin_number_1.setText("*");
+                pin_number_2.setText("_");
+                pin_number_3.setText("_");
+                pin_number_4.setText("_");
+                break;
+            case 2:
+                pin_number_1.setText("*");
+                pin_number_2.setText("*");
+                pin_number_3.setText("_");
+                pin_number_4.setText("_");
+                break;
+            case 3:
+                pin_number_1.setText("*");
+                pin_number_2.setText("*");
+                pin_number_3.setText("*");
+                pin_number_4.setText("_");
+                break;
+            case 4:
+                pin_number_1.setText("*");
+                pin_number_2.setText("*");
+                pin_number_3.setText("*");
+                pin_number_4.setText("*");
+                break;
         }
     }
 }
