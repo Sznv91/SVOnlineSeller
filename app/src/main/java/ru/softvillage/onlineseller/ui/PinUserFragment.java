@@ -4,6 +4,8 @@ import static ru.softvillage.onlineseller.AppSeller.TAG;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -126,7 +128,7 @@ public class PinUserFragment extends Fragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 title_incorrect_pin.setVisibility(View.GONE);
                 Log.d(TAG, "onTextChanged: s:" + s.toString());
-                changePinView(s.length());
+                changePinView(s.toString());
             }
 
             @Override
@@ -194,8 +196,8 @@ public class PinUserFragment extends Fragment {
         }
     }
 
-    private void changePinView(int pinLength) {
-        switch (pinLength) {
+    private void changePinView(String inputText) {
+        switch (inputText.length()) {
             case 0:
                 pin_number_1.setText("_");
                 pin_number_2.setText("_");
@@ -203,28 +205,32 @@ public class PinUserFragment extends Fragment {
                 pin_number_4.setText("_");
                 break;
             case 1:
-                pin_number_1.setText("*");
+                pin_number_1.setText(inputText.substring(0, 1));
                 pin_number_2.setText("_");
                 pin_number_3.setText("_");
                 pin_number_4.setText("_");
+                new Handler(Looper.getMainLooper()).postDelayed(() -> pin_number_1.setText("*"), 500);
                 break;
             case 2:
                 pin_number_1.setText("*");
-                pin_number_2.setText("*");
+                pin_number_2.setText(inputText.substring(1, 2));
                 pin_number_3.setText("_");
                 pin_number_4.setText("_");
+                new Handler(Looper.getMainLooper()).postDelayed(() -> pin_number_2.setText("*"), 500);
                 break;
             case 3:
                 pin_number_1.setText("*");
                 pin_number_2.setText("*");
-                pin_number_3.setText("*");
+                pin_number_3.setText(inputText.substring(2, 3));
                 pin_number_4.setText("_");
+                new Handler(Looper.getMainLooper()).postDelayed(() -> pin_number_3.setText("*"), 500);
                 break;
             case 4:
                 pin_number_1.setText("*");
                 pin_number_2.setText("*");
                 pin_number_3.setText("*");
-                pin_number_4.setText("*");
+                pin_number_4.setText(inputText.substring(3, 4));
+                new Handler(Looper.getMainLooper()).postDelayed(() -> pin_number_4.setText("*"), 500);
                 break;
         }
     }
