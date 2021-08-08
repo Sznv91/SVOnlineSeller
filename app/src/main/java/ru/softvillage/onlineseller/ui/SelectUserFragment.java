@@ -1,5 +1,7 @@
 package ru.softvillage.onlineseller.ui;
 
+import static ru.softvillage.onlineseller.AppSeller.TAG;
+
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,18 +22,29 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.jetbrains.annotations.NotNull;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import ru.softvillage.onlineseller.AppSeller;
 import ru.softvillage.onlineseller.R;
 import ru.softvillage.onlineseller.dataBase.entity.LocalUser;
+import ru.softvillage.onlineseller.network.user.entity.NetworkAnswer;
 import ru.softvillage.onlineseller.presenter.AuthPresenter;
 import ru.softvillage.onlineseller.presenter.UiPresenter;
 import ru.softvillage.onlineseller.ui.recyclerView.UserItemAdapter;
+import ru.softvillage.onlineseller.util.Md5Calc;
 
-public class SelectUserFragment extends Fragment {
+public class SelectUserFragment extends Fragment implements UiPresenter.ISelectUserFragment {
+    private static final String LOCAL_TAG = "_" + SelectUserFragment.class.getSimpleName();
 
-    private ConstraintLayout main;
+    private ConstraintLayout main,
+            load_from_network_holder,
+            data_holder,
+            no_users_holder;
     private TextView title_select_user,
-            button_continue;
+            button_continue,
+            load_from_network_title,
+            no_users_title;
     private RecyclerView user_select_recycler;
 
     private final Observer<LocalUser> lastSelectUserObserver = localUser ->
@@ -72,17 +85,51 @@ public class SelectUserFragment extends Fragment {
     }
 
     @Override
+    public void onDestroyView() {
+        UiPresenter.getInstance().setISelectUserFragment(null);
+        super.onDestroyView();
+    }
+
+    @Override
     public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         UiPresenter.getInstance().getDrawerManager().showUpButton(false);
+        UiPresenter.getInstance().setISelectUserFragment(this);
+
         main = view.findViewById(R.id.main);
+        load_from_network_holder = view.findViewById(R.id.load_from_network_holder);
+        data_holder = view.findViewById(R.id.data_holder);
+        no_users_holder = view.findViewById(R.id.no_users_holder);
         title_select_user = view.findViewById(R.id.title_select_user);
         button_continue = view.findViewById(R.id.button_continue);
+        load_from_network_title = view.findViewById(R.id.load_from_network_title);
+        no_users_title = view.findViewById(R.id.no_users_title);
         user_select_recycler = view.findViewById(R.id.user_select_recycler);
 
         UiPresenter.getInstance().getCurrentThemeLiveData().observe(this.getViewLifecycleOwner(), colorObserver);
         initButtons();
         initRecycler();
+
+        //TODO Проверка флага needLoadUserFromNetwork в случае true запуск службы синхронизации
+        /**
+         * Тестовый метод
+         */
+        asyncGetUsers();
+    }
+
+    private void asyncGetUsers() {
+        AppSeller.getInstance().getUserService().getUsers(Md5Calc.getHash(AuthPresenter.getInstance().getFireBaseToken()), AuthPresenter.getInstance().getFireBaseToken()).enqueue(new Callback<NetworkAnswer>() {
+            @Override
+            public void onResponse(Call<NetworkAnswer> call, Response<NetworkAnswer> response) {
+                if (response.code() == 200)
+                    Log.d(TAG + LOCAL_TAG, "asyncGetUsers() -> onResponse() returned: " + response.body().toString());
+            }
+
+            @Override
+            public void onFailure(Call<NetworkAnswer> call, Throwable t) {
+                Log.d(TAG + LOCAL_TAG, "asyncGetUsers() -> onResponse() returned: " + t.getMessage());
+            }
+        });
     }
 
     private void initRecycler() {
@@ -91,24 +138,32 @@ public class SelectUserFragment extends Fragment {
         @SuppressLint("LongLogTag")
         UserItemAdapter adapter = new UserItemAdapter(LayoutInflater.from(getContext()),
                 user -> {
-                    Log.d(AppSeller.TAG + "_SelectUserFragment", "adapter callback. Click on user: " + user.toString());
+                    Log.d(TAG + "_SelectUserFragment", "adapter callback. Click on user: " + user.toString());
                 });
         DividerItemDecoration divider = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
         divider.setDrawable(getContext().getDrawable(R.drawable.line_divider));
         user_select_recycler.addItemDecoration(divider);
 
         user_select_recycler.setAdapter(adapter);
-        AppSeller.getInstance().getDbHelper().getDataBase().userDao().getAllUserLiveData().observe(this.getViewLifecycleOwner(), adapter::setItems);
+        AppSeller.getInstance().getDbHelper().getDataBase().userDao().getAllUserLiveData().observe(this.getViewLifecycleOwner(), entityList -> {
+            if (entityList.size() == 0) {
+                no_users_holder.setVisibility(View.VISIBLE);
+            } else {
+                no_users_holder.setVisibility(View.GONE);
+                adapter.setItems(entityList);
+                networkLoadHolder(false);
+            }
+        });
     }
 
     @SuppressLint("LongLogTag")
     private void initButtons() {
         button_continue.setOnClickListener(v -> {
-            Log.d(AppSeller.TAG + "_SelectUserFragment", "tap On Button Continue ");
+            Log.d(TAG + "_SelectUserFragment", "tap On Button Continue ");
             if (AuthPresenter.getInstance().getLastSelectUserLiveData().getValue() != null) {
                 PinUserFragment pinUserFragment = PinUserFragment.newInstance(null, null);
                 AppSeller.getInstance().getFragmentDispatcher().replaceFragment(pinUserFragment);
-                Log.d(AppSeller.TAG + "_SelectUserFragment", "selected user " + AuthPresenter.getInstance().getLastSelectUserLiveData().getValue().toString());
+                Log.d(TAG + "_SelectUserFragment", "selected user " + AuthPresenter.getInstance().getLastSelectUserLiveData().getValue().toString());
             }
         });
     }
@@ -119,7 +174,11 @@ public class SelectUserFragment extends Fragment {
         AuthPresenter.getInstance().getLastSelectUserLiveData().observe(this.getViewLifecycleOwner(), lastSelectUserObserver);
         if (colorStyle == UiPresenter.THEME_LIGHT) {
             main.setBackgroundColor(ContextCompat.getColor(main.getContext(), R.color.main_lt));
+            load_from_network_holder.setBackgroundColor(ContextCompat.getColor(load_from_network_holder.getContext(), R.color.main_lt));
+            no_users_holder.setBackgroundColor(ContextCompat.getColor(no_users_holder.getContext(), R.color.main_lt));
             title_select_user.setTextColor(ContextCompat.getColor(title_select_user.getContext(), R.color.active_fonts_lt));
+            load_from_network_title.setTextColor(ContextCompat.getColor(title_select_user.getContext(), R.color.fonts_lt));
+            no_users_title.setTextColor(ContextCompat.getColor(no_users_title.getContext(), R.color.active_fonts_lt));
             if (AuthPresenter.getInstance().getLastSelectUserLiveData().getValue() != null) {
                 button_continue.setTextColor(ContextCompat.getColor(button_continue.getContext(), R.color.icon_dt));
             } else {
@@ -127,13 +186,33 @@ public class SelectUserFragment extends Fragment {
             }
         } else {
             main.setBackgroundColor(ContextCompat.getColor(main.getContext(), R.color.main_dt));
+            load_from_network_holder.setBackgroundColor(ContextCompat.getColor(load_from_network_holder.getContext(), R.color.main_dt));
+            no_users_holder.setBackgroundColor(ContextCompat.getColor(no_users_holder.getContext(), R.color.main_dt));
             title_select_user.setTextColor(ContextCompat.getColor(title_select_user.getContext(), R.color.active_fonts_dt));
+            load_from_network_title.setTextColor(ContextCompat.getColor(title_select_user.getContext(), R.color.fonts_dt));
+            no_users_title.setTextColor(ContextCompat.getColor(no_users_title.getContext(), R.color.active_fonts_dt));
             if (AuthPresenter.getInstance().getLastSelectUserLiveData().getValue() != null) {
                 button_continue.setTextColor(ContextCompat.getColor(button_continue.getContext(), R.color.icon_dt));
             } else {
                 button_continue.setTextColor(ContextCompat.getColor(button_continue.getContext(), R.color.active_fonts_dt));
             }
         }
+
+    }
+
+    @Override
+    public void networkLoadHolder(boolean needShow) {
+        if (needShow) {
+            data_holder.setVisibility(View.GONE);
+            load_from_network_holder.setVisibility(View.VISIBLE);
+        } else {
+            data_holder.setVisibility(View.VISIBLE);
+            load_from_network_holder.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void roomLoadShowHolder() {
 
     }
 }

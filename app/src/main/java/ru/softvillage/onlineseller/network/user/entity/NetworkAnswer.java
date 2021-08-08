@@ -1,12 +1,15 @@
-package ru.softvillage.onlineseller.network.auth.entity;
+package ru.softvillage.onlineseller.network.user.entity;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 import lombok.Data;
 
 @Data
-public class ReceiveToApp {
+public class NetworkAnswer {
+
     @SerializedName("success")
     @Expose
     private boolean success;
@@ -15,11 +18,7 @@ public class ReceiveToApp {
     @Expose
     private String error;
 
-    @SerializedName("code")
+    @SerializedName("users")
     @Expose
-    private String authCode;
-
-    @SerializedName("time")
-    @Expose
-    private String generateTime;
+    private List<LocalUserTo> userTos;
 }

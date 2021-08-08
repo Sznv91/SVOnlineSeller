@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import lombok.Setter;
 import ru.softvillage.onlineseller.AppSeller;
 import ru.softvillage.onlineseller.ui.left_menu.DrawerMenuManager;
 import ru.softvillage.onlineseller.ui.left_menu.IThemeChangeMainActivity;
@@ -25,6 +26,8 @@ public class UiPresenter {
     private int currentTheme;
     private MutableLiveData<Integer> currentThemeLiveData;
     private final UiModeManager uiManager = (UiModeManager) AppSeller.getInstance().getApplicationContext().getSystemService(Context.UI_MODE_SERVICE);
+    @Setter
+    private ISelectUserFragment iSelectUserFragment;
 
     public static UiPresenter getInstance() {
         if (instance == null) {
@@ -95,5 +98,11 @@ public class UiPresenter {
 //            uiManager.setNightMode(UiModeManager.MODE_NIGHT_NO);
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }
+    }
+
+    public interface ISelectUserFragment {
+        void networkLoadHolder(boolean needShow);
+
+        void roomLoadShowHolder();
     }
 }

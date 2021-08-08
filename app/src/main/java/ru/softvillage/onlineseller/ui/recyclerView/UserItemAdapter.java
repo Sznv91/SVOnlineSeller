@@ -33,8 +33,8 @@ public class UserItemAdapter extends RecyclerView.Adapter<UserViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull @NotNull UserViewHolder holder, int position) {
-        Long presenterLastSelectUserUuid = AuthPresenter.getInstance().getLastSelectUserId().getValue();
-        Long currentUserUuid = itemList.get(position).getUserUuid();
+        String presenterLastSelectUserUuid = AuthPresenter.getInstance().getLastSelectUserId().getValue();
+        String currentUserUuid = itemList.get(position).getUserUuid();
         if (currentUserUuid.equals(presenterLastSelectUserUuid)) {
             holder.setSelect();
             AuthPresenter.getInstance().setLastSelectUser(itemList.get(position));

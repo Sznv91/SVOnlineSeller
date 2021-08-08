@@ -9,13 +9,21 @@ import androidx.room.RoomDatabase;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import ru.softvillage.onlineseller.dataBase.entity.LocalOrg;
 import ru.softvillage.onlineseller.dataBase.entity.LocalUser;
+import ru.softvillage.onlineseller.dataBase.entity.UserOrgJoin;
 
-@Database(entities = {LocalUser.class},
+@Database(entities = {LocalUser.class,
+        LocalOrg.class,
+        UserOrgJoin.class},
         version = 1, exportSchema = false)
 public abstract class LocalDataBase extends RoomDatabase {
 
     public abstract UserDao userDao();
+
+    public abstract OrgDao orgDao();
+
+    public abstract UserOrgJoinDao userOrgJoinDao();
 
     private static volatile LocalDataBase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;

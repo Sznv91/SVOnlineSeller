@@ -1,45 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.SelectUserFragment">
 
-    <TextView
-        android:padding="5dp"
-        android:id="@+id/title_select_user"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/roboto_medium"
-        android:text="@string/title_select_user"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:padding="8dp"
-        android:id="@+id/user_select_recycler"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/data_holder"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/button_continue"
-        app:layout_constraintTop_toBottomOf="@+id/title_select_user"
-        tools:listitem="@layout/item_user" />
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        tools:visibility="visible">
 
-    <TextView
-        android:textSize="22sp"
-        android:layout_marginBottom="20dp"
-        android:id="@+id/button_continue"
-        android:background="@drawable/bg_button"
-        android:fontFamily="@font/roboto_medium"
-        android:gravity="center"
-        android:text="@string/button_continue"
-        android:textColor="@color/icon_dt"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:layout_width="wrap_content"/>
+        <TextView
+            android:id="@+id/title_select_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_medium"
+            android:padding="5dp"
+            android:text="@string/title_select_user"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/user_select_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:padding="8dp"
+            app:layout_constraintBottom_toTopOf="@id/button_continue"
+            app:layout_constraintTop_toBottomOf="@+id/title_select_user"
+            tools:listitem="@layout/item_user" />
+
+        <TextView
+            android:id="@+id/button_continue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/bg_button"
+            android:fontFamily="@font/roboto_medium"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="@string/button_continue"
+            android:textColor="@color/icon_dt"
+            android:textSize="22sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/load_from_network_holder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/main_lt"
+        tools:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/network_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="25dp"
+            android:indeterminateTint="@color/icon_dt"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/load_from_network_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/roboto_medium"
+            android:text="Пожалйста подождите\nЗагружаем список пользователей."
+            android:textAlignment="center"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/network_progress" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/no_users_holder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/main_lt">
+
+        <TextView
+            android:id="@+id/no_users_title"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:fontFamily="@font/roboto_bold"
+            android:gravity="center"
+            android:maxLines="2"
+            android:text="Пользователи отсутсвуют"
+            android:textAlignment="center"
+            android:textColor="@color/active_fonts_lt"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

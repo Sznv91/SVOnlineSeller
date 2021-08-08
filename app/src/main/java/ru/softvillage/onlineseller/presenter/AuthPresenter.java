@@ -39,7 +39,7 @@ public class AuthPresenter {
     @Getter
     private String fireBaseToken;
     private final MutableLiveData<Boolean> firstStageAuth = new MutableLiveData<>();
-    private final MutableLiveData<Long> lastSelectUserId = new MutableLiveData<>();
+    private final MutableLiveData<String> lastSelectUserId = new MutableLiveData<>();
 
     @Getter
     @Setter
@@ -67,7 +67,7 @@ public class AuthPresenter {
     @SuppressLint("LongLogTag")
     private void init() {
         firstStageAuth.postValue(Prefs.getInstance().loadBoolean(FIRST_STAGE_AUTH));
-        lastSelectUserId.postValue(Prefs.getInstance().loadLong(LAST_SELECT_USER_ID));
+        lastSelectUserId.postValue(Prefs.getInstance().loadString(LAST_SELECT_USER_ID));
 
         fireBaseToken = Prefs.getInstance().loadString(FIRE_BASE_TOKEN);
         if (TextUtils.isEmpty(fireBaseToken)) {
@@ -87,7 +87,7 @@ public class AuthPresenter {
         }
     }
 
-    public void setFireBaseToken(String fireBaseToken){
+    public void setFireBaseToken(String fireBaseToken) {
         this.fireBaseToken = fireBaseToken;
         Prefs.getInstance().saveString(FIRE_BASE_TOKEN, fireBaseToken);
     }
@@ -104,14 +104,14 @@ public class AuthPresenter {
         }
     }
 
-    public LiveData<Long> getLastSelectUserId() {
+    public LiveData<String> getLastSelectUserId() {
         return lastSelectUserId;
     }
 
-    public void setLastSelectUserId(long lastSelectUserId) {
+    public void setLastSelectUserId(String lastSelectUserId) {
         if (this.lastSelectUserId.getValue() != null &&
                 !this.lastSelectUserId.getValue().equals(lastSelectUserId)) {
-            Prefs.getInstance().saveLong(LAST_SELECT_USER_ID, lastSelectUserId);
+            Prefs.getInstance().saveString(LAST_SELECT_USER_ID, lastSelectUserId);
             this.lastSelectUserId.postValue(lastSelectUserId);
         }
     }
@@ -144,7 +144,7 @@ public class AuthPresenter {
                 @Override
                 public void onResponse(Call<ReceiveToApp> call, Response<ReceiveToApp> response) {
                     AuthPresenter.getInstance().setRetrofitHaveInstance(false);
-                    if (response.body().isSuccess() && !response.body().isError()) {
+                    if (response.body().isSuccess() /*&& !response.body().getError().equals("false")*/) {
                         pin = (response.body().getAuthCode());
                         pinCreateTimeStamp = (response.body().getGenerateTime());
                         Log.d(TAG + TAG_LOCAL, mTag + "onResponse() called with: call = [" + call + "], response = [" + response + "]");

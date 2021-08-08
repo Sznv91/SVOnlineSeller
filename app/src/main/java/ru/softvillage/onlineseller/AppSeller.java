@@ -15,11 +15,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import ru.softvillage.onlineseller.dataBase.DbHelper;
 import ru.softvillage.onlineseller.dataBase.LocalDataBase;
 import ru.softvillage.onlineseller.network.auth.BackendAuthService;
+import ru.softvillage.onlineseller.network.user.UserService;
 import ru.softvillage.onlineseller.util.FragmentDispatcher;
 
 public class AppSeller extends Application {
     public static final String TAG = BuildConfig.APPLICATION_ID;
     public static final String AUTH_BASE_URL = "https://kkt-evotor.ru/";
+    public static final String USER_SERVICE_URL = "https://kkt-evotor.ru/";
     public static final int NETWORK_TIMEOUT = 10;
 
     @Getter
@@ -30,6 +32,8 @@ public class AppSeller extends Application {
     private DbHelper dbHelper;
     @Getter
     private BackendAuthService networkAuthService;
+    @Getter
+    private UserService userService;
 
 
     @Override
@@ -59,6 +63,13 @@ public class AppSeller extends Application {
                 .addConverterFactory(GsonConverterFactory.create(new Gson()))
                 .build()
                 .create(BackendAuthService.class);
+
+        userService = new Retrofit.Builder()
+                .baseUrl(USER_SERVICE_URL)
+                .client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create(new Gson()))
+                .build()
+                .create(UserService.class);
     }
 
     private void initDbHelper() {
