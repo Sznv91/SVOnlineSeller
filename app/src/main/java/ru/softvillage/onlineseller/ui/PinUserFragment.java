@@ -27,14 +27,19 @@ import androidx.lifecycle.Observer;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.LocalDate;
 
+import java.util.List;
+
 import ru.softvillage.onlineseller.AppSeller;
 import ru.softvillage.onlineseller.R;
+import ru.softvillage.onlineseller.dataBase.entity.LocalOrg;
 import ru.softvillage.onlineseller.dataBase.entity.LocalUser;
 import ru.softvillage.onlineseller.presenter.AuthPresenter;
 import ru.softvillage.onlineseller.presenter.UiPresenter;
 import ru.softvillage.onlineseller.util.Md5Calc;
 
 public class PinUserFragment extends Fragment {
+    private static final String LOCAL_TAG = "_" + PinUserFragment.class.getSimpleName();
+
     private ConstraintLayout main;
     private EditText pin_edit_text;
     private TextView title_enter_pin,
@@ -152,6 +157,16 @@ public class PinUserFragment extends Fragment {
             LocalUser user = AuthPresenter.getInstance().getLastSelectUserLiveData().getValue();
             user.setLastDateAuth(LocalDate.now());
             AppSeller.getInstance().getDbHelper().updateUser(user);
+
+            /**
+             * Метод для проверки корректности записи в БД.
+             * После реализации следующих активити/фрагментов -
+             *  - необходимо удалить.
+             */
+            new Thread(()->{
+                List<LocalOrg> userOrgList = AppSeller.getInstance().getDbHelper().getDataBase().userOrgJoinDao().getOrganizationForUsers(user.getUserUuid());
+                Log.d(TAG + LOCAL_TAG, "clickAuthButton: userOrgList.toString()" + userOrgList.toString());
+            }).start();
         } else {
             pin_edit_text.setText("");
             title_incorrect_pin.setVisibility(View.VISIBLE);

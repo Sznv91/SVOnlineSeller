@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import lombok.Getter;
 import lombok.Setter;
 import ru.softvillage.onlineseller.AppSeller;
 import ru.softvillage.onlineseller.ui.left_menu.DrawerMenuManager;
@@ -27,6 +28,7 @@ public class UiPresenter {
     private MutableLiveData<Integer> currentThemeLiveData;
     private final UiModeManager uiManager = (UiModeManager) AppSeller.getInstance().getApplicationContext().getSystemService(Context.UI_MODE_SERVICE);
     @Setter
+    @Getter
     private ISelectUserFragment iSelectUserFragment;
 
     public static UiPresenter getInstance() {
@@ -101,7 +103,7 @@ public class UiPresenter {
     }
 
     public interface ISelectUserFragment {
-        void networkLoadHolder(boolean needShow);
+        void networkLoadHolder(boolean needShowLoader);
 
         void roomLoadShowHolder();
     }

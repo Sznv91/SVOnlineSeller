@@ -12,6 +12,8 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import java.util.UUID;
+
 import lombok.Getter;
 import lombok.Setter;
 import retrofit2.Call;
@@ -28,16 +30,15 @@ public class AuthPresenter {
     public static String TAG_LOCAL = "_" + AuthPresenter.class.getSimpleName();
     public static final Long TEN_MINUTES_IN_MILLIS = 10L * 60 * 1000;
     public static final String FIRE_BASE_TOKEN = "fire_base_token";
+    public static final String DEVICE_ID = "device_id";
     public static final String FIRST_STAGE_AUTH = "first_stage_auth";
     public static final String LAST_SELECT_USER_ID = "last_select_user_id";
     public static final String KEY_NOT_RECEIVED = "key_not_received";
-
-
-    public static final String PIN_CODE = "pin_code";
-    public static final String PIN_CODE_TIME_STAMP = "pin_code_time_stamp";
+    public static final String EMPTY_VALUE = "";
 
     @Getter
     private String fireBaseToken;
+    private String deviceId;
     private final MutableLiveData<Boolean> firstStageAuth = new MutableLiveData<>();
     private final MutableLiveData<String> lastSelectUserId = new MutableLiveData<>();
 
@@ -83,7 +84,17 @@ public class AuthPresenter {
                     setFireBaseToken(s);
                 });
             });
+        }
 
+        if (!TextUtils.isEmpty(Prefs.getInstance().loadString(DEVICE_ID))) {
+            deviceId = Prefs.getInstance().loadString(DEVICE_ID);
+        } else {
+            if (!TextUtils.isEmpty(fireBaseToken)) {
+                deviceId = Md5Calc.getHash(UUID.randomUUID().toString() + fireBaseToken);
+                Prefs.getInstance().saveString(DEVICE_ID, deviceId);
+            } else {
+                deviceId = EMPTY_VALUE;
+            }
         }
     }
 
@@ -136,7 +147,7 @@ public class AuthPresenter {
             AuthPresenter.getInstance().setRetrofitHaveInstance(true);
             String mTag = "_requestPinCode() ";
             SendFromApp data = SendFromApp.builder()
-                    .deviceId(Md5Calc.getHash(AuthPresenter.getInstance().getFireBaseToken()))
+                    .deviceId(AuthPresenter.getInstance().getDeviceId())
                     .fireBaseToken(AuthPresenter.getInstance().getFireBaseToken())
                     .build();
 
@@ -164,4 +175,13 @@ public class AuthPresenter {
         }
     }
 
+    public String getDeviceId() {
+        if (TextUtils.isEmpty(deviceId)) {
+            if (!TextUtils.isEmpty(fireBaseToken)) {
+                deviceId = Md5Calc.getHash(UUID.randomUUID().toString() + fireBaseToken);
+                Prefs.getInstance().saveString(DEVICE_ID, deviceId);
+                return deviceId;
+            } else return EMPTY_VALUE;
+        } else return deviceId;
+    }
 }

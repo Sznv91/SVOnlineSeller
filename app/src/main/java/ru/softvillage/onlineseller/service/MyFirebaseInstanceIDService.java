@@ -9,9 +9,14 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import ru.softvillage.onlineseller.AppSeller;
+import ru.softvillage.onlineseller.presenter.AppPresenter;
 import ru.softvillage.onlineseller.presenter.AuthPresenter;
 
 public class MyFirebaseInstanceIDService extends FirebaseMessagingService {
+    private static final String LOCAL_TAG = "_" + MyFirebaseInstanceIDService.class.getSimpleName();
+    public static final String ACTION_AUTH_CONFIRMED = "AUTH_CONFIRMED";
+    public static final String ACTION_UPDATE_USER_OR_ORG_LIST = "UPDATE_USERS_ORG";
+
     @SuppressLint("LongLogTag")
     @Override
     public void onNewToken(String s) {
@@ -38,9 +43,18 @@ public class MyFirebaseInstanceIDService extends FirebaseMessagingService {
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG + "_MyFirebaseMessagingService", "Message data payload: " + remoteMessage.getData());
-            AuthPresenter.getInstance().setFirstStageAuth(true);
-//            if (remoteMessage.getData().toString().equals("action=AUTH_CONFIRMED"))
-//                AuthPresenter.getInstance().setFirstStageAuth(true);
+            if (remoteMessage.getData().get("action") != null) {
+                switch (remoteMessage.getData().get("action")) {
+                    case ACTION_AUTH_CONFIRMED:
+                        Log.d(TAG + LOCAL_TAG, "onMessageReceived: swith AUTH_CONFIRMED");
+                        AuthPresenter.getInstance().setFirstStageAuth(true);
+                        break;
+                    case ACTION_UPDATE_USER_OR_ORG_LIST:
+                        Log.d(TAG + LOCAL_TAG, "onMessageReceived: swith ACTION_UPDATE_USER_OR_ORG_LIST");
+                        AppPresenter.getInstance().setNeedLoadUserFromNetwork(true);
+                        break;
+                }
+            }
             /* if (*//* Check if data needs to be processed by long running job *//* true) {
                 // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
                 scheduleJob();

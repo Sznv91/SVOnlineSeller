@@ -3,6 +3,7 @@ package ru.softvillage.onlineseller.ui;
 import static ru.softvillage.onlineseller.AppSeller.TAG;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,17 +23,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.jetbrains.annotations.NotNull;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import ru.softvillage.onlineseller.AppSeller;
 import ru.softvillage.onlineseller.R;
 import ru.softvillage.onlineseller.dataBase.entity.LocalUser;
-import ru.softvillage.onlineseller.network.user.entity.NetworkAnswer;
+import ru.softvillage.onlineseller.presenter.AppPresenter;
 import ru.softvillage.onlineseller.presenter.AuthPresenter;
 import ru.softvillage.onlineseller.presenter.UiPresenter;
+import ru.softvillage.onlineseller.service.BackendSyncService;
 import ru.softvillage.onlineseller.ui.recyclerView.UserItemAdapter;
-import ru.softvillage.onlineseller.util.Md5Calc;
 
 public class SelectUserFragment extends Fragment implements UiPresenter.ISelectUserFragment {
     private static final String LOCAL_TAG = "_" + SelectUserFragment.class.getSimpleName();
@@ -110,26 +108,15 @@ public class SelectUserFragment extends Fragment implements UiPresenter.ISelectU
         initButtons();
         initRecycler();
 
-        //TODO Проверка флага needLoadUserFromNetwork в случае true запуск службы синхронизации
-        /**
-         * Тестовый метод
-         */
-        asyncGetUsers();
+        if (AppPresenter.getInstance().isNeedLoadUserFromNetwork()) networkLoadHolder(true);
     }
 
-    private void asyncGetUsers() {
-        AppSeller.getInstance().getUserService().getUsers(Md5Calc.getHash(AuthPresenter.getInstance().getFireBaseToken()), AuthPresenter.getInstance().getFireBaseToken()).enqueue(new Callback<NetworkAnswer>() {
-            @Override
-            public void onResponse(Call<NetworkAnswer> call, Response<NetworkAnswer> response) {
-                if (response.code() == 200)
-                    Log.d(TAG + LOCAL_TAG, "asyncGetUsers() -> onResponse() returned: " + response.body().toString());
-            }
-
-            @Override
-            public void onFailure(Call<NetworkAnswer> call, Throwable t) {
-                Log.d(TAG + LOCAL_TAG, "asyncGetUsers() -> onResponse() returned: " + t.getMessage());
-            }
-        });
+    private void startSyncService() {
+        if (!AppSeller.isMyServiceRunning(BackendSyncService.class)) {
+            Intent startIntent = new Intent(AppSeller.getInstance().getApplicationContext(), BackendSyncService.class);
+            startIntent.setAction("start");
+            AppSeller.getInstance().startService(startIntent);
+        }
     }
 
     private void initRecycler() {
@@ -201,14 +188,17 @@ public class SelectUserFragment extends Fragment implements UiPresenter.ISelectU
     }
 
     @Override
-    public void networkLoadHolder(boolean needShow) {
-        if (needShow) {
-            data_holder.setVisibility(View.GONE);
-            load_from_network_holder.setVisibility(View.VISIBLE);
-        } else {
-            data_holder.setVisibility(View.VISIBLE);
-            load_from_network_holder.setVisibility(View.GONE);
-        }
+    public void networkLoadHolder(boolean needShowLoader) {
+        requireActivity().runOnUiThread(() -> {
+            if (needShowLoader) {
+                data_holder.setVisibility(View.GONE);
+                load_from_network_holder.setVisibility(View.VISIBLE);
+            } else {
+                data_holder.setVisibility(View.VISIBLE);
+                load_from_network_holder.setVisibility(View.GONE);
+            }
+        });
+        if (needShowLoader) startSyncService();
     }
 
     @Override
