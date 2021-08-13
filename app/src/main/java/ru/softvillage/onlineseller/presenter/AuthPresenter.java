@@ -34,6 +34,7 @@ public class AuthPresenter {
     public static final String FIRST_STAGE_AUTH = "first_stage_auth";
     public static final String LAST_SELECT_USER_ID = "last_select_user_id";
     public static final String KEY_NOT_RECEIVED = "key_not_received";
+    public static final String KEY_FIREBASE_RECEIVE_ERROR = "key_firebase_receive_error";
     public static final String EMPTY_VALUE = "";
 
     @Getter
@@ -72,18 +73,22 @@ public class AuthPresenter {
 
         fireBaseToken = Prefs.getInstance().loadString(FIRE_BASE_TOKEN);
         if (TextUtils.isEmpty(fireBaseToken)) {
-            FirebaseMessaging.getInstance().getToken().addOnSuccessListener(s -> {
-                Log.d(TAG + TAG_LOCAL, "FireBaseTag: " + s);
-                setFireBaseToken(s);
-            });
-
-            FirebaseMessaging.getInstance().getToken().addOnFailureListener(e -> {
-                Log.d(TAG + TAG_LOCAL, ".getToken().addOnFailureListener");
-                FirebaseMessaging.getInstance().getToken().addOnSuccessListener(s -> {
-                    Log.d(TAG + TAG_LOCAL, "FireBaseTag: " + s);
-                    setFireBaseToken(s);
-                });
-            });
+            FirebaseMessaging.getInstance().getToken()
+                    .addOnSuccessListener(s -> {
+                        Log.d(TAG + TAG_LOCAL, "OnSuccessListener FireBaseTag: " + s);
+                        setFireBaseToken(s);
+                    })
+                    .addOnFailureListener(e -> {
+                        //FireBase token не получен, необходимо перезагрузить приложение.
+                        Log.d(TAG + TAG_LOCAL, "OnFailureListener FireBaseTag");
+                        pin = "-----";
+                        pinCreateTimeStamp = KEY_FIREBASE_RECEIVE_ERROR;
+                    })
+                    .addOnCanceledListener(() -> {
+                        Log.d(TAG + TAG_LOCAL, "OnCanceledListener FireBaseTag");
+                        pin = "-----";
+                        pinCreateTimeStamp = KEY_FIREBASE_RECEIVE_ERROR;
+                    });
         }
 
         if (!TextUtils.isEmpty(Prefs.getInstance().loadString(DEVICE_ID))) {
@@ -143,6 +148,10 @@ public class AuthPresenter {
     }
 
     public void requestPinCode() {
+        if (pinCreateTimeStamp.equals(KEY_FIREBASE_RECEIVE_ERROR)) {
+            return;
+        }
+
         if (!AuthPresenter.getInstance().isRetrofitHaveInstance()) {
             AuthPresenter.getInstance().setRetrofitHaveInstance(true);
             String mTag = "_requestPinCode() ";

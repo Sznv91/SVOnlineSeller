@@ -39,7 +39,8 @@ public class AuthFragmentV2 extends Fragment implements View.OnClickListener {
     private Runnable timerRun;
     private ConstraintLayout main_fragment_auth,
             auth_pin_layout,
-            auth_load_kay_holder;
+            auth_load_key_holder,
+            firebase_receive_error;
     private ImageView auth_big_logo,
             auth_pin_background;
     private View pin_divider_1,
@@ -54,7 +55,8 @@ public class AuthFragmentV2 extends Fragment implements View.OnClickListener {
             expired_timer,
             auth_hint_title,
             auth_title_demo_mode,
-            auth_title_progress;
+            auth_title_progress,
+            tv_firebase_receive_error_title;
 
     Observer<Integer> observer = this::changeColor;
 
@@ -98,8 +100,10 @@ public class AuthFragmentV2 extends Fragment implements View.OnClickListener {
         expired_timer = view.findViewById(R.id.expired_timer);
         auth_hint_title = view.findViewById(R.id.auth_hint_title);
         auth_title_demo_mode = view.findViewById(R.id.auth_title_demo_mode);
-        auth_load_kay_holder = view.findViewById(R.id.auth_load_kay_holder);
+        auth_load_key_holder = view.findViewById(R.id.auth_load_key_holder);
+        firebase_receive_error = view.findViewById(R.id.firebase_receive_error);
         auth_title_progress = view.findViewById(R.id.auth_title_progress);
+        tv_firebase_receive_error_title = view.findViewById(R.id.tv_firebase_receive_error_title);
 
         auth_hint_title.setOnClickListener(this);
         auth_title_demo_mode.setOnClickListener(this);
@@ -154,8 +158,10 @@ public class AuthFragmentV2 extends Fragment implements View.OnClickListener {
             pin_number_5.setTextColor(ContextCompat.getColor(pin_number_5.getContext(), R.color.active_fonts_lt));
             auth_hint_title.setTextColor(ContextCompat.getColor(auth_hint_title.getContext(), R.color.active_fonts_lt));
             auth_title_demo_mode.setBackground(ContextCompat.getDrawable(auth_title_demo_mode.getContext(), R.drawable.bg_button));
-            auth_load_kay_holder.setBackgroundColor(ContextCompat.getColor(auth_load_kay_holder.getContext(), R.color.background_lt));
+            auth_load_key_holder.setBackgroundColor(ContextCompat.getColor(auth_load_key_holder.getContext(), R.color.background_lt));
+            firebase_receive_error.setBackgroundColor(ContextCompat.getColor(firebase_receive_error.getContext(), R.color.background_lt));
             auth_title_progress.setTextColor(ContextCompat.getColor(pin_number_1.getContext(), R.color.active_fonts_lt));
+            tv_firebase_receive_error_title.setTextColor(ContextCompat.getColor(tv_firebase_receive_error_title.getContext(), R.color.fonts_lt));
         } else {
             main_fragment_auth.setBackgroundColor(ContextCompat.getColor(main_fragment_auth.getContext(), R.color.main_dt));
             auth_pin_background.setImageDrawable(ContextCompat.getDrawable(auth_pin_background.getContext(), R.drawable.ic_pin_background_dark));
@@ -170,8 +176,10 @@ public class AuthFragmentV2 extends Fragment implements View.OnClickListener {
             pin_number_5.setTextColor(ContextCompat.getColor(pin_number_5.getContext(), R.color.active_fonts_dt));
             auth_hint_title.setTextColor(ContextCompat.getColor(auth_hint_title.getContext(), R.color.active_fonts_dt));
             auth_title_demo_mode.setBackground(ContextCompat.getDrawable(auth_title_demo_mode.getContext(), R.drawable.bg_button));
-            auth_load_kay_holder.setBackgroundColor(ContextCompat.getColor(auth_load_kay_holder.getContext(), R.color.main_dt));
+            auth_load_key_holder.setBackgroundColor(ContextCompat.getColor(auth_load_key_holder.getContext(), R.color.main_dt));
+            firebase_receive_error.setBackgroundColor(ContextCompat.getColor(firebase_receive_error.getContext(), R.color.background_dt));
             auth_title_progress.setTextColor(ContextCompat.getColor(pin_number_1.getContext(), R.color.active_fonts_dt));
+            tv_firebase_receive_error_title.setTextColor(ContextCompat.getColor(tv_firebase_receive_error_title.getContext(), R.color.fonts_dt));
         }
         auth_title_demo_mode.setTextColor(ContextCompat.getColor(auth_title_demo_mode.getContext(), R.color.icon_lt));
     }
@@ -197,6 +205,10 @@ public class AuthFragmentV2 extends Fragment implements View.OnClickListener {
             AuthPresenter.getInstance().getPinCreateTimeStamp(true);
             return;
         }
+        if (generateTime.equals(AuthPresenter.KEY_FIREBASE_RECEIVE_ERROR)) {
+            firebase_receive_error.setVisibility(View.VISIBLE);
+            return;
+        }
         Long now = DateTime.now().getMillis();
         String sGenerateTime = generateTime + "000";
         Long millisGenerateTime = Long.parseLong(sGenerateTime) - 2000L;
@@ -211,8 +223,8 @@ public class AuthFragmentV2 extends Fragment implements View.OnClickListener {
         if (baseData < 0) {
             AuthPresenter.getInstance().getPinCreateTimeStamp(true);
             try {
-                requireActivity().runOnUiThread(() -> auth_load_kay_holder.setVisibility(View.VISIBLE));
-            } catch (IllegalStateException e){
+                requireActivity().runOnUiThread(() -> auth_load_key_holder.setVisibility(View.VISIBLE));
+            } catch (IllegalStateException e) {
                 //ignore
             }
             return;
@@ -223,7 +235,7 @@ public class AuthFragmentV2 extends Fragment implements View.OnClickListener {
         try {
             getActivity().runOnUiThread(() -> {
                 expired_timer.setText(String.format(getString(R.string.minute_second_format), finalMinutes, finalSeconds));
-                auth_load_kay_holder.setVisibility(View.GONE);
+                auth_load_key_holder.setVisibility(View.GONE);
             });
         } catch (NullPointerException e) {
             //ignore exception
