@@ -13,9 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.OnlineSeller">
         <service
-            android:name=".service.BackendSyncService"
+            android:name=".service.BackendUserSyncService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true"/>
 
         <activity
             android:name=".ui.MainActivity"

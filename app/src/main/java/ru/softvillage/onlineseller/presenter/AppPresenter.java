@@ -1,7 +1,6 @@
 package ru.softvillage.onlineseller.presenter;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.util.Log;
 
 import java.util.UUID;
@@ -11,7 +10,6 @@ import ru.softvillage.onlineseller.AppSeller;
 import ru.softvillage.onlineseller.dataBase.entity.LocalOrg;
 import ru.softvillage.onlineseller.dataBase.entity.LocalUser;
 import ru.softvillage.onlineseller.dataBase.entity.UserOrgJoin;
-import ru.softvillage.onlineseller.service.BackendSyncService;
 import ru.softvillage.onlineseller.util.Md5Calc;
 import ru.softvillage.onlineseller.util.Prefs;
 

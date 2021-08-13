@@ -29,7 +29,7 @@ import ru.softvillage.onlineseller.dataBase.entity.LocalUser;
 import ru.softvillage.onlineseller.presenter.AppPresenter;
 import ru.softvillage.onlineseller.presenter.AuthPresenter;
 import ru.softvillage.onlineseller.presenter.UiPresenter;
-import ru.softvillage.onlineseller.service.BackendSyncService;
+import ru.softvillage.onlineseller.service.BackendUserSyncService;
 import ru.softvillage.onlineseller.ui.recyclerView.UserItemAdapter;
 
 public class SelectUserFragment extends Fragment implements UiPresenter.ISelectUserFragment {
@@ -112,8 +112,8 @@ public class SelectUserFragment extends Fragment implements UiPresenter.ISelectU
     }
 
     private void startSyncService() {
-        if (!AppSeller.isMyServiceRunning(BackendSyncService.class)) {
-            Intent startIntent = new Intent(AppSeller.getInstance().getApplicationContext(), BackendSyncService.class);
+        if (!AppSeller.isMyServiceRunning(BackendUserSyncService.class)) {
+            Intent startIntent = new Intent(AppSeller.getInstance().getApplicationContext(), BackendUserSyncService.class);
             startIntent.setAction("start");
             AppSeller.getInstance().startService(startIntent);
         }
@@ -192,6 +192,7 @@ public class SelectUserFragment extends Fragment implements UiPresenter.ISelectU
         requireActivity().runOnUiThread(() -> {
             if (needShowLoader) {
                 data_holder.setVisibility(View.GONE);
+                no_users_holder.setVisibility(View.GONE);
                 load_from_network_holder.setVisibility(View.VISIBLE);
             } else {
                 data_holder.setVisibility(View.VISIBLE);

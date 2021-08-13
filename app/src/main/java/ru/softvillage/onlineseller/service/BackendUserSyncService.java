@@ -10,8 +10,6 @@ import android.util.Log;
 import java.io.IOException;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 import ru.softvillage.onlineseller.AppSeller;
 import ru.softvillage.onlineseller.dataBase.entity.LocalOrg;
@@ -25,10 +23,10 @@ import ru.softvillage.onlineseller.presenter.AuthPresenter;
 import ru.softvillage.onlineseller.presenter.UiPresenter;
 import ru.softvillage.onlineseller.util.Md5Calc;
 
-public class BackendSyncService extends Service {
-    private static final String LOCAL_TAG = "_" + BackendSyncService.class.getSimpleName();
+public class BackendUserSyncService extends Service {
+    private static final String LOCAL_TAG = "_" + BackendUserSyncService.class.getSimpleName();
 
-    public BackendSyncService() {
+    public BackendUserSyncService() {
     }
 
     @Override
